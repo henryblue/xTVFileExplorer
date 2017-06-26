@@ -8,12 +8,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
 
+import com.hb.xtvfileexplorer.Adapter.RootsExpandableAdapter;
 import com.hb.xtvfileexplorer.R;
 
 
 public class RootsFragment extends Fragment {
 
     private ExpandableListView mList;
+    private RootsExpandableAdapter mAdapter;
 
     @Nullable
     @Override
@@ -27,7 +29,13 @@ public class RootsFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        mAdapter = new RootsExpandableAdapter();
+        mList.setAdapter(mAdapter);
+    }
 
+    @Override
+    public void onResume() {
+        super.onResume();
     }
 
     private ExpandableListView.OnChildClickListener mItemListener = new ExpandableListView.OnChildClickListener() {
