@@ -1,4 +1,4 @@
-package com.hb.xtvfileexplorer.fragment;
+package com.hb.xtvfileexplorer.loader;
 
 import android.content.AsyncTaskLoader;
 import android.content.ContentProviderClient;
@@ -9,9 +9,9 @@ import android.net.Uri;
 import android.os.RemoteException;
 import android.provider.DocumentsContract;
 import android.text.format.DateUtils;
-import android.util.Log;
 
 import com.hb.xtvfileexplorer.model.RootInfo;
+import com.hb.xtvfileexplorer.provider.AppsProvider;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -19,8 +19,8 @@ import java.util.Collection;
 import java.util.List;
 
 
+
 public class RootsLoader extends AsyncTaskLoader<Collection<RootInfo>> {
-    private final static String TAG = "SysSettingFragment";
     private static final long PROVIDER_ANR_TIMEOUT = 20 * DateUtils.SECOND_IN_MILLIS;
     private Context mContext;
     private Collection<RootInfo> mResult;
@@ -33,8 +33,7 @@ public class RootsLoader extends AsyncTaskLoader<Collection<RootInfo>> {
     @Override
     public Collection<RootInfo> loadInBackground() {
         final ContentResolver resolver = mContext.getContentResolver();
-        Log.i(TAG, "loadInBackground: ==========================");
-        return loadRootsForAuthority(resolver, "app.com.aidlexample.documents");
+        return loadRootsForAuthority(resolver, AppsProvider.AUTHORITY);
     }
 
     @Override
@@ -42,7 +41,6 @@ public class RootsLoader extends AsyncTaskLoader<Collection<RootInfo>> {
         if (isReset()) {
             return;
         }
-        //Collection<RootInfo> oldResult = mResult;
         mResult = result;
 
         if (isStarted()) {
@@ -80,9 +78,7 @@ public class RootsLoader extends AsyncTaskLoader<Collection<RootInfo>> {
         try {
             client = acquireUnstableProviderOrThrow(resolver, authority);
             cursor = client.query(rootsUri, null, null, null, null);
-            Log.i(TAG, "loadRootsForAuthority: ========================");
             if (cursor != null) {
-                Log.i(TAG, "loadRootsForAuthority: cursor not null=============");
                 while (cursor.moveToNext()) {
                     RootInfo root = RootInfo.fromRootsCursor(authority, cursor);
                     roots.add(root);
@@ -108,17 +104,15 @@ public class RootsLoader extends AsyncTaskLoader<Collection<RootInfo>> {
         return client;
     }
 
-    private void setDetectNotResponding(ContentProviderClient client, long anrTimeout){
-        //if(Utils.hasKitKat()){
-            try {
-                Method method = client.getClass().getMethod("setDetectNotResponding", long.class);
-                if (method != null) {
-                    method.invoke(client, anrTimeout);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
+    private void setDetectNotResponding(ContentProviderClient client, long anrTimeout) {
+        try {
+            Method method = client.getClass().getMethod("setDetectNotResponding", long.class);
+            if (method != null) {
+                method.invoke(client, anrTimeout);
             }
-        //}
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private  void closeQuietly(Cursor closeable) {

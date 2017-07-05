@@ -44,6 +44,11 @@
             tools:ignore="NestedWeights,PrivateResource"
             tools:targetApi="lollipop">
 
+            <fragment
+                android:id="@+id/fragmnet_root"
+                android:name="com.hb.xtvfileexplorer.fragment.RootsFragment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
         </LinearLayout>
 
     </LinearLayout>

@@ -39,7 +39,7 @@ public class AppsProvider extends DocumentsProvider {
     public static final String ROOT_ID_SYSTEM_APP = "system_apps:";
     public static final String ROOT_ID_PROCESS = "process:";
 
-    private static final String AUTHORITY = BuildConfig.APPLICATION_ID + ".apps.documents";
+    public static final String AUTHORITY = BuildConfig.APPLICATION_ID + ".apps.documents";
 
     private static final String[] DEFAULT_ROOT_PROJECTION = new String[] {
             Root.COLUMN_ROOT_ID, Root.COLUMN_FLAGS, Root.COLUMN_ICON,
@@ -156,7 +156,6 @@ public class AppsProvider extends DocumentsProvider {
                     for (ActivityManager.RunningAppProcessInfo processInfo : runningProcessesList) {
                         includeAppFromProcess(result, docId, processInfo, null);
                     }
-
                 }
             }
         } finally {

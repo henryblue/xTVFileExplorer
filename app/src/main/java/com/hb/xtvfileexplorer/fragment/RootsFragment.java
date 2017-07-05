@@ -14,6 +14,7 @@ import android.widget.ExpandableListView;
 
 import com.hb.xtvfileexplorer.Adapter.RootsExpandableAdapter;
 import com.hb.xtvfileexplorer.R;
+import com.hb.xtvfileexplorer.loader.RootsLoader;
 import com.hb.xtvfileexplorer.model.RootInfo;
 
 import java.util.Collection;
@@ -38,15 +39,12 @@ public class RootsFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mAdapter = new RootsExpandableAdapter();
-        mList.setAdapter(mAdapter);
         final Context context = getActivity();
 
         mCallbacks = new LoaderManager.LoaderCallbacks<Collection<RootInfo>>() {
 
             @Override
             public Loader<Collection<RootInfo>> onCreateLoader(int id, Bundle args) {
-                Log.i(TAG, "onCreateLoader: ================================");
                 return new RootsLoader(context);
             }
 
@@ -61,11 +59,12 @@ public class RootsFragment extends Fragment {
                     Log.i(TAG, "onLoadFinished: ==" + info.getAvailableBytes());
                     Log.i(TAG, "onLoadFinished: ==============================");
                 }
+                //mAdapter = new RootsExpandableAdapter();
+                //mList.setAdapter(mAdapter);
             }
 
             @Override
             public void onLoaderReset(Loader<Collection<RootInfo>> loader) {
-                Log.i(TAG, "onLoaderReset: ==================================");
             }
         };
     }
