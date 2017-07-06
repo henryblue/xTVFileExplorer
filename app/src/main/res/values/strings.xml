@@ -1,6 +1,7 @@
 <resources>
-    <string name="app_name">"XTvFileExplorer "</string>
+    <string name="app_name">XTvFileExplorer</string>
     <string name="root_apps">User Apps</string>
     <string name="root_system_apps">System Apps</string>
     <string name="root_processes">Processes</string>
+    <string name="label_apps">APPS</string>
 </resources>

@@ -6,14 +6,12 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.RemoteException;
 import android.provider.DocumentsContract;
-import android.text.format.DateUtils;
 
 import com.hb.xtvfileexplorer.model.RootInfo;
 import com.hb.xtvfileexplorer.provider.AppsProvider;
+import com.hb.xtvfileexplorer.utils.Utils;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -21,7 +19,6 @@ import java.util.List;
 
 
 public class RootsLoader extends AsyncTaskLoader<Collection<RootInfo>> {
-    private static final long PROVIDER_ANR_TIMEOUT = 20 * DateUtils.SECOND_IN_MILLIS;
     private Context mContext;
     private Collection<RootInfo> mResult;
 
@@ -76,7 +73,7 @@ public class RootsLoader extends AsyncTaskLoader<Collection<RootInfo>> {
         ContentProviderClient client = null;
         Cursor cursor = null;
         try {
-            client = acquireUnstableProviderOrThrow(resolver, authority);
+            client = Utils.acquireUnstableProviderOrThrow(resolver, authority);
             cursor = client.query(rootsUri, null, null, null, null);
             if (cursor != null) {
                 while (cursor.moveToNext()) {
@@ -87,51 +84,12 @@ public class RootsLoader extends AsyncTaskLoader<Collection<RootInfo>> {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            closeQuietly(cursor);
-            releaseQuietly(client);
+            Utils.closeQuietly(cursor);
+            Utils.releaseQuietly(client);
         }
 
         return roots;
     }
 
-    private ContentProviderClient acquireUnstableProviderOrThrow(
-            ContentResolver resolver, String authority) throws RemoteException {
-        final ContentProviderClient client = resolver.acquireUnstableContentProviderClient(authority);
-        if (client == null) {
-            throw new RemoteException("Failed to acquire provider for " + authority);
-        }
-        setDetectNotResponding(client, PROVIDER_ANR_TIMEOUT);
-        return client;
-    }
 
-    private void setDetectNotResponding(ContentProviderClient client, long anrTimeout) {
-        try {
-            Method method = client.getClass().getMethod("setDetectNotResponding", long.class);
-            if (method != null) {
-                method.invoke(client, anrTimeout);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private  void closeQuietly(Cursor closeable) {
-        if (closeable != null) {
-            try {
-                closeable.close();
-            } catch (RuntimeException rethrown) {
-                throw rethrown;
-            } catch (Exception ignored) {
-            }
-        }
-    }
-
-    private void releaseQuietly(ContentProviderClient client) {
-        if (client != null) {
-            try {
-                client.release();
-            } catch (Exception ignored) {
-            }
-        }
-    }
 }

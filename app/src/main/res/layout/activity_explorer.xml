@@ -21,9 +21,8 @@
         tools:ignore="UnusedAttribute" />
 
     <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:baselineAligned="false"
         android:orientation="horizontal"
         tools:layout_editor_absoluteY="0dp"
@@ -31,25 +30,17 @@
 
         <FrameLayout
             android:id="@+id/container_roots"
-            android:layout_width="384dp"
-            android:layout_height="match_parent" />
-
-        <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@color/material_grey_50"
-            android:elevation="8dp"
-            android:orientation="vertical"
-            tools:ignore="NestedWeights,PrivateResource"
-            tools:targetApi="lollipop">
+            android:background="@color/grey_50"
+            android:layout_weight="1"/>
 
-            <fragment
-                android:id="@+id/fragmnet_root"
-                android:name="com.hb.xtvfileexplorer.fragment.RootsFragment"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-        </LinearLayout>
+        <FrameLayout
+            android:id="@+id/container_directory"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:background="@drawable/bg_content"
+            android:layout_weight="3.5"/>
 
     </LinearLayout>
 </LinearLayout>

@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Tv文件管理器</string>
+    <string name="root_apps">用户应用</string>
+    <string name="root_system_apps">系统应用</string>
+    <string name="root_processes">进程</string>
+    <string name="label_apps">应用</string>
+</resources>
