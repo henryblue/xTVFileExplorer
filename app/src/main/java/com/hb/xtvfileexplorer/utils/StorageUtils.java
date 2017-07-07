@@ -8,8 +8,6 @@ import android.os.Build;
 import android.os.Environment;
 import android.os.StatFs;
 
-import java.io.RandomAccessFile;
-
 public class StorageUtils {
 
     public static final int PARTITION_SYSTEM = 1;
@@ -61,39 +59,19 @@ public class StorageUtils {
             //
         }
         if (null != stat) {
-            if(Utils.hasJellyBeanMR2()){
-                final long blockSize = stat.getBlockSizeLong();
-                final long availableBlocks = (isTotal ? stat.getBlockCountLong() : stat.getAvailableBlocksLong());
-                return availableBlocks * blockSize;
-            } else {
-                final long blockSize = stat.getBlockSize();
-                final long availableBlocks = (isTotal ? (long)stat.getBlockCount() : (long)stat.getAvailableBlocks());
-                return availableBlocks * blockSize;
-            }
+            final long blockSize = stat.getBlockSizeLong();
+            final long availableBlocks = (isTotal ? stat.getBlockCountLong() : stat.getAvailableBlocksLong());
+            return availableBlocks * blockSize;
         }
         else return 0L;
     }
 
     private long getSizeTotalRAM(boolean isTotal) {
-        long sizeInBytes = 1000;
+        long sizeInBytes;
         ActivityManager.MemoryInfo mi = new ActivityManager.MemoryInfo();
         mActivityManager.getMemoryInfo(mi);
         if(isTotal) {
-            try {
-                if(Utils.hasJellyBean()) {
-                    sizeInBytes = mi.totalMem;
-                } else {
-                    RandomAccessFile reader = new RandomAccessFile("/proc/meminfo", "r");
-                    String load = reader.readLine();
-                    String[] totrm = load.split(" kB");
-                    String[] trm = totrm[0].split(" ");
-                    sizeInBytes=Long.parseLong(trm[trm.length-1]);
-                    sizeInBytes=sizeInBytes*1024;
-                    reader.close();
-                }
-            } catch (Exception e) {
-                //
-            }
+            sizeInBytes = mi.totalMem;
         } else {
             sizeInBytes = mi.availMem;
         }

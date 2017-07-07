@@ -4,4 +4,10 @@
     <string name="root_system_apps">System Apps</string>
     <string name="root_processes">Processes</string>
     <string name="label_apps">APPS</string>
+    <string name="loading">Loading...</string>
+    <string name="app_no_data">no data, please again!</string>
+    <string name="root_images">Images</string>
+    <string name="root_videos">Video</string>
+    <string name="root_audio">Audio</string>
+    <string name="label_medias">Medias</string>
 </resources>

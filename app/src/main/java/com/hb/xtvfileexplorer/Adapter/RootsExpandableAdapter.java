@@ -11,6 +11,7 @@ import com.hb.xtvfileexplorer.fragment.RootsFragment.Item;
 import com.hb.xtvfileexplorer.fragment.RootsFragment.RootItem;
 import com.hb.xtvfileexplorer.model.GroupInfo;
 import com.hb.xtvfileexplorer.model.RootInfo;
+import com.hb.xtvfileexplorer.provider.MediaProvider;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -30,21 +31,43 @@ public class RootsExpandableAdapter extends BaseExpandableListAdapter {
 
     private void processRoots(Collection<RootInfo> roots) {
         List<GroupInfo> groupRoots = new ArrayList<>();
+        final List<Item> medias = new ArrayList<>();
         final List<Item> apps = new ArrayList<>();
 
         for (RootInfo rootInfo : roots) {
             if (rootInfo.isApp()) {
                 apps.add(new RootItem(rootInfo));
+            } else if (rootInfo.isLibraryMedia()) {
+                medias.add(new RootItem(rootInfo));
             }
         }
 
+        String label = mContext.getString(R.string.label_medias);
+        if(!medias.isEmpty()){
+            groupRoots.add(new GroupInfo(label, medias));
+        } else {
+            medias.add(generateRootItem("视频", MediaProvider.TYPE_VIDEOS_ROOT));
+            medias.add(generateRootItem("图片", MediaProvider.TYPE_IMAGES_ROOT));
+            medias.add(generateRootItem("音乐", MediaProvider.TYPE_AUDIO_ROOT));
+            groupRoots.add(new GroupInfo(label, medias));
+        }
+
         if(!apps.isEmpty()){
-            String label = mContext.getString(R.string.label_apps);
+            label = mContext.getString(R.string.label_apps);
             groupRoots.add(new GroupInfo(label, apps));
         }
 
         mGroup.clear();
         mGroup.addAll(groupRoots);
+    }
+
+    private RootItem generateRootItem(String title, String rootId) {
+        RootInfo rootInfo = new RootInfo();
+        rootInfo.isManuGen = true;
+        rootInfo.setTitle(title);
+        RootInfo.setTypeIndex(rootInfo, rootId);
+        rootInfo.deriveFields();
+        return new RootItem(rootInfo);
     }
 
     @Override

@@ -18,6 +18,17 @@
         </activity>
 
         <provider
+            android:authorities="com.hb.xtvfileexplorer.media.documents"
+            android:name=".provider.MediaProvider"
+            android:exported="true"
+            android:grantUriPermissions="true"
+            android:permission="android.permission.MANAGE_DOCUMENTS">
+            <intent-filter>
+                <action android:name="android.content.action.DOCUMENTS_PROVIDER"/>
+            </intent-filter>
+        </provider>
+
+        <provider
             android:authorities="com.hb.xtvfileexplorer.apps.documents"
             android:name=".provider.AppsProvider"
             android:exported="true"

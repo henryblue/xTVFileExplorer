@@ -8,11 +8,13 @@ import android.provider.DocumentsContract.Root;
 
 import com.hb.xtvfileexplorer.R;
 import com.hb.xtvfileexplorer.provider.AppsProvider;
+import com.hb.xtvfileexplorer.provider.MediaProvider;
 import com.hb.xtvfileexplorer.utils.IconUtils;
 
 
 public class RootInfo {
 
+    public boolean isManuGen = false;
     private String authority;
     private String rootId;
     private int flags;
@@ -172,7 +174,20 @@ public class RootInfo {
             derivedTag = "system_apps";
         } else if (isAppProcess()) {
             derivedIcon = R.drawable.ic_root_process;
+            derivedColor = R.color.item_doc_apps;
             derivedTag = "process";
+        } else if (isImages()) {
+            derivedIcon = R.drawable.ic_root_image;
+            derivedColor = R.color.item_doc_image;
+            derivedTag = "images";
+        } else if (isVideos()) {
+            derivedIcon = R.drawable.ic_root_video;
+            derivedColor = R.color.item_doc_video;
+            derivedTag = "videos";
+        } else if (isAudio()) {
+            derivedIcon = R.drawable.ic_root_audio;
+            derivedColor = R.color.item_doc_audio;
+            derivedTag = "audio";
         }
     }
 
@@ -213,8 +228,32 @@ public class RootInfo {
         return (index != -1) && cursor.getInt(index) == 1;
     }
 
+    public boolean isLibraryMedia(){
+        return isImages() || isVideos() || isAudio();
+    }
+
     public boolean isApp() {
         return AppsProvider.AUTHORITY.equals(authority);
+    }
+
+    public static void setTypeIndex(RootInfo info, String rootId) {
+        info.setAuthority(MediaProvider.AUTHORITY);
+        info.setRootId(rootId);
+    }
+
+    public boolean isImages() {
+        return MediaProvider.AUTHORITY.equals(authority)
+                && MediaProvider.TYPE_IMAGES_ROOT.equals(rootId);
+    }
+
+    public boolean isVideos() {
+        return MediaProvider.AUTHORITY.equals(authority)
+                && MediaProvider.TYPE_VIDEOS_ROOT.equals(rootId);
+    }
+
+    public boolean isAudio() {
+        return MediaProvider.AUTHORITY.equals(authority)
+                && MediaProvider.TYPE_AUDIO_ROOT.equals(rootId);
     }
 
     public boolean isAppPackage() {
@@ -246,4 +285,5 @@ public class RootInfo {
             return IconUtils.loadPackageIcon(context, authority, icon);
         }
     }
+
 }

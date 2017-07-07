@@ -4,4 +4,6 @@
     <string name="root_system_apps">系统应用</string>
     <string name="root_processes">进程</string>
     <string name="label_apps">应用</string>
+    <string name="loading">加载中...</string>
+    <string name="app_no_data">没有数据, 请重试!</string>
 </resources>

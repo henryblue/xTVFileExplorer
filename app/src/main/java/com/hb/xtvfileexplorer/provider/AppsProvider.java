@@ -18,7 +18,6 @@ import android.provider.DocumentsContract.Root;
 import android.provider.DocumentsProvider;
 import android.support.annotation.RequiresApi;
 import android.text.TextUtils;
-import android.util.Log;
 import android.util.SparseArray;
 
 import com.hb.xtvfileexplorer.BuildConfig;
@@ -116,7 +115,6 @@ public class AppsProvider extends DocumentsProvider {
     @Override
     public Cursor queryDocument(String documentId, String[] projection) throws FileNotFoundException {
         final MatrixCursor result = new MatrixCursor(resolveDocumentProjection(projection));
-        Log.i("RootsFragment", "queryDocument: ====documentId==" + documentId);
         includeDefaultDocument(result, documentId);
         return result;
     }
@@ -125,7 +123,6 @@ public class AppsProvider extends DocumentsProvider {
     public Cursor queryChildDocuments(String docId, String[] projection, String sortOrder)
             throws FileNotFoundException {
         final MatrixCursor result = new DocumentCursor(resolveDocumentProjection(projection), docId);
-        Log.i("RootsFragment", "queryChildDocuments: ====docId==" + docId);
         // Delegate to real provider
         final long token = Binder.clearCallingIdentity();
         try {
@@ -226,13 +223,15 @@ public class AppsProvider extends DocumentsProvider {
         String process = processInfo.process;
         final String packageName = processInfo.process;
         process = process.substring(process.lastIndexOf(".") + 1, process.length());
-        String summary = "";
+        String summary;
         String displayName = "";
         ApplicationInfo appInfo = null;
         try {
             appInfo = mPackageManager.getPackageInfo(packageName, PackageManager.GET_ACTIVITIES).applicationInfo;
             displayName = process ;
-        } catch (Exception e) { }
+        } catch (Exception e) {
+            //
+        }
 
         if (TextUtils.isEmpty(displayName)) {
             displayName = process;

@@ -27,5 +27,7 @@ dependencies {
     compile 'com.android.support:appcompat-v7:25.0.0'
     compile 'com.android.support.constraint:constraint-layout:1.0.0-alpha9'
     compile 'com.jaredrummler:android-processes:+'
+    compile 'com.pnikosis:materialish-progress:1.7'
     testCompile 'junit:junit:4.12'
+    compile 'net.jcip:jcip-annotations:1.0'
 }

@@ -65,11 +65,7 @@ public class RootsFragment extends Fragment {
         int leftWidth = width - Utils.dpToPx(leftPadding);
         int rightWidth = width - Utils.dpToPx(rightPadding);
 
-        if(Utils.hasJellyBeanMR2()){
-            mList.setIndicatorBoundsRelative(leftWidth, rightWidth);
-        } else {
-            mList.setIndicatorBounds(leftWidth, rightWidth);
-        }
+        mList.setIndicatorBoundsRelative(leftWidth, rightWidth);
         return view;
     }
 
@@ -87,7 +83,6 @@ public class RootsFragment extends Fragment {
 
             @Override
             public void onLoadFinished(Loader<Collection<RootInfo>> loader, Collection<RootInfo> data) {
-
                 if (mAdapter == null) {
                     mAdapter = new RootsExpandableAdapter(context, data);
                     Parcelable state = mList.onSaveInstanceState();

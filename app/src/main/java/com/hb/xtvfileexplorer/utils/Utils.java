@@ -11,7 +11,10 @@ import android.os.Build;
 import android.os.RemoteException;
 import android.support.v4.text.TextUtilsCompat;
 import android.text.format.DateUtils;
+import android.text.format.Time;
 import android.util.DisplayMetrics;
+
+import com.hb.xtvfileexplorer.ExplorerActivity;
 
 import java.lang.reflect.Method;
 import java.util.Locale;
@@ -20,14 +23,6 @@ import java.util.Locale;
 public class Utils {
 
     private static final long PROVIDER_ANR_TIMEOUT = 20 * DateUtils.SECOND_IN_MILLIS;
-
-    public static boolean hasJellyBeanMR2() {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2;
-    }
-
-    public static boolean hasJellyBean() {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN;
-    }
 
     public static boolean hasNougat() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.N;
@@ -92,5 +87,29 @@ public class Utils {
             } catch (Exception ignored) {
             }
         }
+    }
+
+    public static boolean isActivityAlive(ExplorerActivity activity) {
+        return !(null == activity
+                || activity.isDestroyed());
+    }
+
+    public static String formatTime(Context context, long when) {
+        Time then = new Time();
+        then.set(when);
+        Time now = new Time();
+        now.setToNow();
+
+        int flags = DateUtils.FORMAT_NO_NOON | DateUtils.FORMAT_NO_MIDNIGHT | DateUtils.FORMAT_ABBREV_ALL;
+
+        if (then.year != now.year) {
+            flags |= DateUtils.FORMAT_SHOW_YEAR | DateUtils.FORMAT_SHOW_DATE;
+        } else if (then.yearDay != now.yearDay) {
+            flags |= DateUtils.FORMAT_SHOW_DATE;
+        } else {
+            flags |= DateUtils.FORMAT_SHOW_TIME;
+        }
+
+        return DateUtils.formatDateTime(context, when, flags);
     }
 }

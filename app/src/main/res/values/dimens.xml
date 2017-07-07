@@ -2,4 +2,13 @@
 <resources>
     <dimen name="list_item_padding">40dp</dimen>
     <dimen name="progress_bar_size">80dp</dimen>
+
+    <dimen name="list_divider_inset">72dp</dimen>
+    <dimen name="app_list_item_padding">10dp</dimen>
+    <dimen name="app_list_item_height">64dp</dimen>
+    <dimen name="icon_size">46dp</dimen>
+    <dimen name="app_list_img_height">48dp</dimen>
+    <dimen name="app_list_img_width">48dp</dimen>
+    <bool name="list_divider_inset_left">true</bool>
+
 </resources>

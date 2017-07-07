@@ -9,8 +9,9 @@ import android.net.Uri;
 import android.provider.DocumentsContract;
 
 import com.hb.xtvfileexplorer.model.RootInfo;
-import com.hb.xtvfileexplorer.provider.AppsProvider;
 import com.hb.xtvfileexplorer.utils.Utils;
+
+import net.jcip.annotations.GuardedBy;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -22,6 +23,15 @@ public class RootsLoader extends AsyncTaskLoader<Collection<RootInfo>> {
     private Context mContext;
     private Collection<RootInfo> mResult;
 
+    private final Object mLock = new Object();
+
+    @GuardedBy("mLock")
+    private static List<String> mStoppedAuthorities = new ArrayList<>();
+
+    public static void addAuthority(String authority) {
+        mStoppedAuthorities.add(authority);
+    }
+
     public RootsLoader(Context context) {
         super(context);
         mContext = context;
@@ -29,8 +39,8 @@ public class RootsLoader extends AsyncTaskLoader<Collection<RootInfo>> {
 
     @Override
     public Collection<RootInfo> loadInBackground() {
-        final ContentResolver resolver = mContext.getContentResolver();
-        return loadRootsForAuthority(resolver, AppsProvider.AUTHORITY);
+        mResult = loadStoppedAuthorities();
+        return mResult;
     }
 
     @Override
@@ -65,6 +75,18 @@ public class RootsLoader extends AsyncTaskLoader<Collection<RootInfo>> {
         super.onReset();
         onStopLoading();
         mResult = null;
+    }
+
+    private Collection<RootInfo> loadStoppedAuthorities() {
+        List<RootInfo> rootInfos = new ArrayList<>();
+        final ContentResolver resolver = mContext.getContentResolver();
+        synchronized (mLock) {
+            for (String authority : mStoppedAuthorities) {
+                rootInfos.addAll(loadRootsForAuthority(resolver, authority));
+            }
+            mStoppedAuthorities.clear();
+        }
+        return rootInfos;
     }
 
     private Collection<RootInfo> loadRootsForAuthority(ContentResolver resolver, String authority) {
