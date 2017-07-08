@@ -37,6 +37,11 @@ public class ExplorerActivity extends BaseActivity {
     }
 
     @Override
+    public RootInfo getCurrentRoot() {
+        return mRoot;
+    }
+
+    @Override
     public void onRootPicked(RootInfo root, boolean closeDrawer) {
         if(null == root){
             return;
@@ -74,6 +79,11 @@ public class ExplorerActivity extends BaseActivity {
             AppsFragment.show(fm, root, cwd);
         } else if (mRoot.isLibraryMedia()){
             MediasFragment.show(fm, root, cwd);
+        }
+
+        final RootsFragment roots = RootsFragment.get(fm);
+        if (roots != null) {
+            roots.onCurrentRootChanged();
         }
     }
 

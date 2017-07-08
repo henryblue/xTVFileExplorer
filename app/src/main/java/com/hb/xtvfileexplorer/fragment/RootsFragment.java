@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.hb.xtvfileexplorer.Adapter.RootsExpandableAdapter;
@@ -27,6 +28,7 @@ import com.hb.xtvfileexplorer.model.RootInfo;
 import com.hb.xtvfileexplorer.utils.Utils;
 
 import java.util.Collection;
+import java.util.Objects;
 
 
 public class RootsFragment extends Fragment {
@@ -55,6 +57,7 @@ public class RootsFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_roots, container, false);
         mList = (ExpandableListView) view.findViewById(android.R.id.list);
         mList.setOnChildClickListener(mItemListener);
+        mList.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         DisplayMetrics metrics = new DisplayMetrics();
         getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
         int width = Utils.dpToPx(302);
@@ -91,6 +94,12 @@ public class RootsFragment extends Fragment {
                 } else {
                     mAdapter.setData(data);
                 }
+
+                int groupCount = mAdapter.getGroupCount();
+                for (int i = 0; i < groupCount; i++) {
+                    mList.expandGroup(i);
+                }
+                mList.requestFocus();
             }
 
             @Override
@@ -107,6 +116,30 @@ public class RootsFragment extends Fragment {
         getLoaderManager().restartLoader(2, null, mCallbacks);
     }
 
+    public void onCurrentRootChanged() {
+        if (mAdapter == null || mList == null) return;
+
+        final RootInfo root = ((BaseActivity) getActivity()).getCurrentRoot();
+        for (int i = 0; i < mAdapter.getGroupCount(); i++) {
+            for (int j = 0; j < mAdapter.getChildrenCount(i); j++) {
+                final Object item = mAdapter.getChild(i,j);
+                if (item instanceof RootItem) {
+                    final RootInfo testRoot = ((RootItem) item).root;
+                    if (Objects.equals(testRoot, root)) {
+                        try {
+                            long id = ExpandableListView.getPackedPositionForChild(i, j);
+                            int index = mList.getFlatListPosition(id);
+                            mList.setItemChecked(index, true);
+                        } catch (Exception e){
+                            //
+                        }
+                        return;
+                    }
+                }
+            }
+        }
+    }
+
     private ExpandableListView.OnChildClickListener mItemListener = new ExpandableListView.OnChildClickListener() {
         @Override
         public boolean onChildClick(ExpandableListView parent, View v, int groupPosition,
@@ -114,7 +147,8 @@ public class RootsFragment extends Fragment {
             final BaseActivity activity = BaseActivity.get(RootsFragment.this);
             final Item item = (Item) mAdapter.getChild(groupPosition, childPosition);
             if (item instanceof RootItem) {
-                int index = parent.getFlatListPosition(ExpandableListView.getPackedPositionForChild(groupPosition, childPosition));
+                int index = parent.getFlatListPosition(
+                        ExpandableListView.getPackedPositionForChild(groupPosition, childPosition));
                 parent.setItemChecked(index, true);
                 activity.onRootPicked(((RootItem) item).root, true);
             } else {

@@ -9,5 +9,6 @@
     <color name="item_doc_video">#C74141</color>
     <color name="item_doc_image">#00838F</color>
 
+    <color name="defaultThemeColor">#808080</color>
     <color name="grey_50">#fffafafa</color>
 </resources>

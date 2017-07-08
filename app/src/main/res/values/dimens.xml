@@ -11,4 +11,6 @@
     <dimen name="app_list_img_width">48dp</dimen>
     <bool name="list_divider_inset_left">true</bool>
 
+    <dimen name="expander_inset">8dp</dimen>
+
 </resources>

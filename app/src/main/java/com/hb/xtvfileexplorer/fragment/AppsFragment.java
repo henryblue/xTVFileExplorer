@@ -33,6 +33,7 @@ import com.hb.xtvfileexplorer.loader.DirectoryLoader;
 import com.hb.xtvfileexplorer.model.DirectoryResult;
 import com.hb.xtvfileexplorer.model.DocumentInfo;
 import com.hb.xtvfileexplorer.model.RootInfo;
+import com.hb.xtvfileexplorer.ui.CompatTextView;
 import com.hb.xtvfileexplorer.utils.Utils;
 
 import static com.hb.xtvfileexplorer.provider.AppsProvider.ROOT_ID_PROCESS;
@@ -50,7 +51,7 @@ public class AppsFragment extends Fragment {
 	private static RootInfo mRootInfo;
 	private static DocumentInfo mDocInfo;
     private LinearLayout mProgressBarLayout;
-	private TextView mEmptyView;
+	private CompatTextView mEmptyView;
 
 	public static void show(FragmentManager fm, RootInfo root, DocumentInfo doc) {
 		mRootInfo = root;
@@ -73,7 +74,7 @@ public class AppsFragment extends Fragment {
 		final View view = inflater.inflate(R.layout.fragment_app, container, false);
 
         mProgressBarLayout = (LinearLayout) view.findViewById(R.id.progressContainer);
-		mEmptyView = (TextView) view.findViewById(R.id.internalEmpty);
+		mEmptyView = (CompatTextView) view.findViewById(android.R.id.empty);
 
 		mListView = (ListView) view.findViewById(R.id.list);
 		mListView.setOnItemClickListener(mItemListener);
@@ -119,7 +120,6 @@ public class AppsFragment extends Fragment {
 				if (!isAdded())
 					return;
 				mAdapter.swapResult(result);
-
 			}
 
 			@Override

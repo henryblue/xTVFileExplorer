@@ -42,13 +42,16 @@
             android:layout_height="match_parent"
             android:drawSelectorOnTop="false" />
 
-        <TextView
-            android:id="@+id/internalEmpty"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+        <com.hb.xtvfileexplorer.ui.CompatTextView
+            android:id="@android:id/empty"
+            style="@style/TextAppearance.AppCompat.Subhead"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:gravity="center"
-            android:textIsSelectable="false"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
+            android:text="@string/empty"
+            android:visibility="gone"
+            app:drawableTop="@drawable/ic_empty_file" />
     </FrameLayout>
 
 </FrameLayout>

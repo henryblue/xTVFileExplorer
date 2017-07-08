@@ -46,9 +46,13 @@ public class RootsExpandableAdapter extends BaseExpandableListAdapter {
         if(!medias.isEmpty()){
             groupRoots.add(new GroupInfo(label, medias));
         } else {
-            medias.add(generateRootItem("视频", MediaProvider.TYPE_VIDEOS_ROOT));
-            medias.add(generateRootItem("图片", MediaProvider.TYPE_IMAGES_ROOT));
-            medias.add(generateRootItem("音乐", MediaProvider.TYPE_AUDIO_ROOT));
+            // 伪造数据, 显示媒体信息
+            medias.add(generateRootItem(mContext.getString(R.string.video),
+                    MediaProvider.TYPE_VIDEOS_ROOT));
+            medias.add(generateRootItem(mContext.getString(R.string.image),
+                    MediaProvider.TYPE_IMAGES_ROOT));
+            medias.add(generateRootItem(mContext.getString(R.string.audio),
+                    MediaProvider.TYPE_AUDIO_ROOT));
             groupRoots.add(new GroupInfo(label, medias));
         }
 
@@ -63,7 +67,7 @@ public class RootsExpandableAdapter extends BaseExpandableListAdapter {
 
     private RootItem generateRootItem(String title, String rootId) {
         RootInfo rootInfo = new RootInfo();
-        rootInfo.isManuGen = true;
+        rootInfo.isManuGen = true;     //标识数据为伪造
         rootInfo.setTitle(title);
         RootInfo.setTypeIndex(rootInfo, rootId);
         rootInfo.deriveFields();

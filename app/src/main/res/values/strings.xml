@@ -10,4 +10,5 @@
     <string name="root_videos">Video</string>
     <string name="root_audio">Audio</string>
     <string name="label_medias">Medias</string>
+    <string name="empty">No items</string>
 </resources>

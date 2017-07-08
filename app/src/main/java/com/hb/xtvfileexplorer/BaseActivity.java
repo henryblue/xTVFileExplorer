@@ -25,4 +25,8 @@ public abstract class BaseActivity extends AppCompatActivity {
         RootsLoader.addAuthority(AppsProvider.AUTHORITY);
         RootsLoader.addAuthority(MediaProvider.AUTHORITY);
     }
+
+    public RootInfo getCurrentRoot() {
+        return null;
+    }
 }
