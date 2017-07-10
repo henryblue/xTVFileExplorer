@@ -40,7 +40,9 @@
             android:id="@+id/list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:drawSelectorOnTop="false" />
+            android:listSelector="@drawable/list_item_bg_focus"
+            android:drawSelectorOnTop="false"
+            android:descendantFocusability="beforeDescendants"/>
 
         <com.hb.xtvfileexplorer.ui.CompatTextView
             android:id="@android:id/empty"

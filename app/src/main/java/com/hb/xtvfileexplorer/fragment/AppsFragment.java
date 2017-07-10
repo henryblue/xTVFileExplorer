@@ -5,6 +5,7 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.app.LoaderManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.Loader;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -16,26 +17,27 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.DocumentsContract;
 import android.text.format.Formatter;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.hb.xtvfileexplorer.R;
 import com.hb.xtvfileexplorer.loader.DirectoryLoader;
 import com.hb.xtvfileexplorer.model.DirectoryResult;
 import com.hb.xtvfileexplorer.model.DocumentInfo;
 import com.hb.xtvfileexplorer.model.RootInfo;
+import com.hb.xtvfileexplorer.provider.AppsProvider;
 import com.hb.xtvfileexplorer.ui.CompatTextView;
+import com.hb.xtvfileexplorer.ui.ListItemView;
 import com.hb.xtvfileexplorer.utils.Utils;
 
+import static com.hb.xtvfileexplorer.fragment.RootsFragment.TAG;
 import static com.hb.xtvfileexplorer.provider.AppsProvider.ROOT_ID_PROCESS;
 
 
@@ -78,6 +80,8 @@ public class AppsFragment extends Fragment {
 
 		mListView = (ListView) view.findViewById(R.id.list);
 		mListView.setOnItemClickListener(mItemListener);
+        mListView.setOnItemSelectedListener(mItemSelectedListener);
+        mListView.setOnFocusChangeListener(mFocusListener);
 
         // Indent our list divider to align with text
         final Drawable divider = mListView.getDivider();
@@ -101,7 +105,6 @@ public class AppsFragment extends Fragment {
 
 		mAdapter = new DocumentsAdapter();
 
-
 		mCallbacks = new LoaderManager.LoaderCallbacks<DirectoryResult>() {
 			@Override
 			public Loader<DirectoryResult> onCreateLoader(int id, Bundle args) {
@@ -120,6 +123,7 @@ public class AppsFragment extends Fragment {
 				if (!isAdded())
 					return;
 				mAdapter.swapResult(result);
+                mListView.requestFocus();
 			}
 
 			@Override
@@ -134,7 +138,6 @@ public class AppsFragment extends Fragment {
 	private void setEmptyState() {
 		if (mAdapter.isEmpty()) {
 			mEmptyView.setVisibility(View.VISIBLE);
-			mEmptyView.setText(R.string.app_no_data);
 		} else {
 			mEmptyView.setVisibility(View.GONE);
 		}
@@ -143,12 +146,51 @@ public class AppsFragment extends Fragment {
 	private OnItemClickListener mItemListener = new OnItemClickListener() {
 		@Override
 		public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//			final Cursor cursor = mAdapter.getItem(position);
-
+            final Cursor cursor = mAdapter.getItem(position);
+            if (cursor != null) {
+                final String docId = RootInfo.getCursorString(cursor, DocumentsContract.Document.COLUMN_DOCUMENT_ID);
+                if (null != mRootInfo && mRootInfo.isApp()) {
+                    String packageName = AppsProvider.getPackageForDocId(docId);
+                    PackageManager pm = getActivity().getPackageManager();
+                    Intent intent = pm.getLaunchIntentForPackage(packageName);
+                    if (intent != null) {
+                        startActivity(intent);
+                    }
+                }
+            }
 		}
 	};
 
-	private class DocumentsAdapter extends BaseAdapter implements OnClickListener {
+	private View mOldSelectView;
+    private AdapterView.OnItemSelectedListener mItemSelectedListener = new AdapterView.OnItemSelectedListener() {
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            if (mOldSelectView != null) {
+                mOldSelectView.setSelected(false);
+            }
+            view.setSelected(true);
+            mOldSelectView = view;
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+        }
+    };
+
+    private View.OnFocusChangeListener mFocusListener = new View.OnFocusChangeListener() {
+        @Override
+        public void onFocusChange(View v, boolean hasFocus) {
+
+            if (mOldSelectView != null) {
+                Log.i(TAG, "onFocusChange: ==========hasFocus==========" + hasFocus + "==postiton==" + mListView.getPositionForView(mOldSelectView));
+                if (hasFocus) {
+                    mOldSelectView.requestFocus();
+                }
+            }
+        }
+    };
+
+	private class DocumentsAdapter extends BaseAdapter {
 		private Cursor mCursor;
 		private int mCursorCount;
 
@@ -157,11 +199,6 @@ public class AppsFragment extends Fragment {
 			mCursorCount = mCursor != null ? mCursor.getCount() : 0;
 			setEmptyState();
 			notifyDataSetChanged();
-		}
-
-		@Override
-		public void onClick(View v) {
-
 		}
 
 		@Override
@@ -191,11 +228,12 @@ public class AppsFragment extends Fragment {
 
 		private View getDocumentView(int position, View convertView, ViewGroup parent) {
 			final Context context = parent.getContext();
+            ListItemView itemView;
 			if (convertView == null) {
-				final LayoutInflater inflater = LayoutInflater.from(context);
-				int layoutId = mRootInfo.isAppProcess() ? R.layout.item_doc_process_list : R.layout.item_doc_app_list;
-				convertView = inflater.inflate(layoutId, parent, false);
-			}
+                itemView = new ListItemView(context);
+			} else {
+                itemView = (ListItemView) convertView;
+            }
 
 			final Cursor cursor = getItem(position);
 			final String docDisplayName = RootInfo.getCursorString(cursor, DocumentsContract.Document.COLUMN_DISPLAY_NAME);
@@ -203,30 +241,23 @@ public class AppsFragment extends Fragment {
 			final String docSummary = RootInfo.getCursorString(cursor, DocumentsContract.Document.COLUMN_SUMMARY);
 			final long docSize = RootInfo.getCursorLong(cursor, DocumentsContract.Document.COLUMN_SIZE);
 
-			final TextView title = (TextView) convertView.findViewById(R.id.title);
-			final ImageView icon = (ImageView) convertView.findViewById(R.id.icon);
-			final TextView date = (TextView) convertView.findViewById(R.id.date);
-			final TextView summary = (TextView) convertView.findViewById(R.id.summary);
-			final TextView size = (TextView) convertView.findViewById(R.id.size);
-
 			PackageManager pm = context.getPackageManager();
 			try {
 				PackageInfo info = pm.getPackageInfo(docSummary, 0);
 				Drawable drawable = info.applicationInfo.loadIcon(pm);
 				if (drawable != null) {
-					icon.setImageDrawable(drawable);
+                    itemView.setIcon(drawable);
 				}
 			} catch (PackageManager.NameNotFoundException e) {
-				icon.setImageResource(R.mipmap.ic_launcher);
+                itemView.setIconResource(R.mipmap.ic_launcher);
 			}
-			title.setText(docDisplayName);
-			date.setText(Utils.formatTime(context, docLastModified));
-			if (summary != null) {
-				summary.setText(docSummary);
-			}
-			size.setText(Formatter.formatFileSize(context, docSize));
-
-			return convertView;
+			itemView.setTitle(docDisplayName);
+            itemView.setDate(Utils.formatTime(context, docLastModified));
+            if (!mRootInfo.isAppProcess()) {
+                itemView.setSummary(docSummary);
+            }
+            itemView.setSize(Formatter.formatFileSize(context, docSize));
+			return itemView;
 		}
 	}
 

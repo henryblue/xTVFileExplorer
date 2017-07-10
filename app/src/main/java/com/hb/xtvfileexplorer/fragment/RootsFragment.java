@@ -76,7 +76,6 @@ public class RootsFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         final Context context = getActivity();
-
         mCallbacks = new LoaderManager.LoaderCallbacks<Collection<RootInfo>>() {
 
             @Override
@@ -108,11 +107,6 @@ public class RootsFragment extends Fragment {
                 mList.setAdapter((BaseExpandableListAdapter)null);
             }
         };
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
         getLoaderManager().restartLoader(2, null, mCallbacks);
     }
 

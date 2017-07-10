@@ -169,6 +169,11 @@ public class AppsProvider extends DocumentsProvider {
         return null;
     }
 
+    public static String getPackageForDocId(String docId){
+        final int splitIndex = docId.indexOf(':', 1);
+        return docId.substring(splitIndex + 1);
+    }
+
     private static String[] resolveRootProjection(String[] projection) {
         return projection != null ? projection : DEFAULT_ROOT_PROJECTION;
     }

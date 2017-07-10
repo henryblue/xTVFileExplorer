@@ -1,13 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ExpandableListView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@android:id/list"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <ExpandableListView
-        android:id="@android:id/list"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:clipToPadding="false"
-        android:divider="@null"
-        android:groupIndicator="@drawable/expander_group"
-        android:paddingTop="8dp" />
-</FrameLayout>
+    android:layout_height="match_parent"
+    android:clipToPadding="false"
+    android:divider="@null"
+    android:groupIndicator="@drawable/expander_group"
+    android:listSelector="@drawable/list_item_bg_focus"
+    android:paddingTop="8dp" />
