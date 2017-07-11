@@ -17,7 +17,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.DocumentsContract;
 import android.text.format.Formatter;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,7 +24,6 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 
 import com.hb.xtvfileexplorer.R;
 import com.hb.xtvfileexplorer.loader.DirectoryLoader;
@@ -35,9 +33,9 @@ import com.hb.xtvfileexplorer.model.RootInfo;
 import com.hb.xtvfileexplorer.provider.AppsProvider;
 import com.hb.xtvfileexplorer.ui.CompatTextView;
 import com.hb.xtvfileexplorer.ui.ListItemView;
+import com.hb.xtvfileexplorer.ui.xListView;
 import com.hb.xtvfileexplorer.utils.Utils;
 
-import static com.hb.xtvfileexplorer.fragment.RootsFragment.TAG;
 import static com.hb.xtvfileexplorer.provider.AppsProvider.ROOT_ID_PROCESS;
 
 
@@ -45,7 +43,7 @@ public class AppsFragment extends Fragment {
 
 	private static final int mLoaderId = 42;
 
-	private ListView mListView;
+	private xListView mListView;
 
 	private DocumentsAdapter mAdapter;
 	private LoaderManager.LoaderCallbacks<DirectoryResult> mCallbacks;
@@ -78,10 +76,8 @@ public class AppsFragment extends Fragment {
         mProgressBarLayout = (LinearLayout) view.findViewById(R.id.progressContainer);
 		mEmptyView = (CompatTextView) view.findViewById(android.R.id.empty);
 
-		mListView = (ListView) view.findViewById(R.id.list);
+		mListView = (xListView) view.findViewById(R.id.list);
 		mListView.setOnItemClickListener(mItemListener);
-        mListView.setOnItemSelectedListener(mItemSelectedListener);
-        mListView.setOnFocusChangeListener(mFocusListener);
 
         // Indent our list divider to align with text
         final Drawable divider = mListView.getDivider();
@@ -160,35 +156,6 @@ public class AppsFragment extends Fragment {
             }
 		}
 	};
-
-	private View mOldSelectView;
-    private AdapterView.OnItemSelectedListener mItemSelectedListener = new AdapterView.OnItemSelectedListener() {
-        @Override
-        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-            if (mOldSelectView != null) {
-                mOldSelectView.setSelected(false);
-            }
-            view.setSelected(true);
-            mOldSelectView = view;
-        }
-
-        @Override
-        public void onNothingSelected(AdapterView<?> parent) {
-        }
-    };
-
-    private View.OnFocusChangeListener mFocusListener = new View.OnFocusChangeListener() {
-        @Override
-        public void onFocusChange(View v, boolean hasFocus) {
-
-            if (mOldSelectView != null) {
-                Log.i(TAG, "onFocusChange: ==========hasFocus==========" + hasFocus + "==postiton==" + mListView.getPositionForView(mOldSelectView));
-                if (hasFocus) {
-                    mOldSelectView.requestFocus();
-                }
-            }
-        }
-    };
 
 	private class DocumentsAdapter extends BaseAdapter {
 		private Cursor mCursor;

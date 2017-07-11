@@ -2,7 +2,6 @@ package com.hb.xtvfileexplorer.ui;
 
 import android.content.Context;
 import android.content.res.Resources;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
@@ -46,7 +45,6 @@ public class ListItemView extends LinearLayout {
         setOrientation(HORIZONTAL);
         setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT));
-        setFocusable(true);
 
         View.inflate(context, R.layout.item_doc_app_list, this);
         mTitle = (TextView) findViewById(R.id.title);
@@ -78,21 +76,5 @@ public class ListItemView extends LinearLayout {
 
     public void setSize(String size) {
         mSize.setText(size);
-    }
-
-    @Override
-    public void setSelected(boolean selected) {
-        super.setSelected(selected);
-        if (selected) {
-            mTitle.setTextColor(Color.WHITE);
-            mDate.setTextColor(Color.WHITE);
-            mSummary.setTextColor(Color.WHITE);
-            mSize.setTextColor(Color.WHITE);
-        } else {
-            mTitle.setTextColor(Color.BLACK);
-            mDate.setTextColor(Color.GRAY);
-            mSummary.setTextColor(Color.GRAY);
-            mSize.setTextColor(Color.GRAY);
-        }
     }
 }

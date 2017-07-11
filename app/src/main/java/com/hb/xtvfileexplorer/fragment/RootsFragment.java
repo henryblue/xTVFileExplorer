@@ -25,6 +25,7 @@ import com.hb.xtvfileexplorer.R;
 import com.hb.xtvfileexplorer.loader.RootsLoader;
 import com.hb.xtvfileexplorer.model.GroupInfo;
 import com.hb.xtvfileexplorer.model.RootInfo;
+import com.hb.xtvfileexplorer.ui.xExpandableListView;
 import com.hb.xtvfileexplorer.utils.Utils;
 
 import java.util.Collection;
@@ -34,7 +35,7 @@ import java.util.Objects;
 public class RootsFragment extends Fragment {
 
     public static final String TAG = "RootsFragment";
-    private ExpandableListView mList;
+    private xExpandableListView mList;
     private RootsExpandableAdapter mAdapter;
     private LoaderManager.LoaderCallbacks<Collection<RootInfo>> mCallbacks;
 
@@ -55,7 +56,7 @@ public class RootsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_roots, container, false);
-        mList = (ExpandableListView) view.findViewById(android.R.id.list);
+        mList = (xExpandableListView) view.findViewById(android.R.id.list);
         mList.setOnChildClickListener(mItemListener);
         mList.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         DisplayMetrics metrics = new DisplayMetrics();
@@ -138,6 +139,7 @@ public class RootsFragment extends Fragment {
         @Override
         public boolean onChildClick(ExpandableListView parent, View v, int groupPosition,
                                     int childPosition, long id) {
+            mList.onChildClick();
             final BaseActivity activity = BaseActivity.get(RootsFragment.this);
             final Item item = (Item) mAdapter.getChild(groupPosition, childPosition);
             if (item instanceof RootItem) {
@@ -167,7 +169,6 @@ public class RootsFragment extends Fragment {
             bindView(convertView);
             return convertView;
         }
-
         public abstract void bindView(View convertView);
     }
 
@@ -190,28 +191,18 @@ public class RootsFragment extends Fragment {
         }
     }
 
-    public static class GroupItem {
+    public static class GroupItem extends Item {
         final String mLabel;
-        private final int mLayoutId;
 
         public GroupItem(GroupInfo groupInfo) {
+            super(R.layout.item_root_header);
             mLabel = groupInfo.label;
-            mLayoutId = R.layout.item_root_header;
         }
 
-        public View getView(View convertView, ViewGroup parent) {
-            if (convertView == null) {
-                convertView = LayoutInflater.from(parent.getContext())
-                        .inflate(mLayoutId, parent, false);
-            }
-            bindView(convertView);
-            return convertView;
-        }
-
-        void bindView(View convertView) {
+        @Override
+        public void bindView(View convertView) {
             final TextView title = (TextView) convertView.findViewById(android.R.id.title);
             title.setText(mLabel);
         }
-
     }
 }

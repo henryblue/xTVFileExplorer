@@ -18,6 +18,7 @@
         app:contentInsetStart="72dp"
         app:popupTheme="?attr/actionBarPopupTheme"
         app:theme="?attr/actionBarTheme"
+        android:focusable="false"
         tools:ignore="UnusedAttribute" />
 
     <LinearLayout
