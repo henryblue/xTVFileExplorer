@@ -131,4 +131,8 @@ public class DocumentInfo {
     public boolean isDirectory() {
         return DocumentsContract.Document.MIME_TYPE_DIR.equals(mimeType);
     }
+
+    public static DocumentInfo fromDirectoryCursor(Cursor cursor) {
+        return null;
+    }
 }

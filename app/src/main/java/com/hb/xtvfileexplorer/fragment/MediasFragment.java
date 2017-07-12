@@ -151,7 +151,7 @@ public class MediasFragment extends Fragment {
 			final Context context = parent.getContext();
 			if (convertView == null) {
 				final LayoutInflater inflater = LayoutInflater.from(context);
-				int layoutId = R.layout.item_doc_app_list;
+				int layoutId = R.layout.item_doc_list;
 				convertView = inflater.inflate(layoutId, parent, false);
 			}
 

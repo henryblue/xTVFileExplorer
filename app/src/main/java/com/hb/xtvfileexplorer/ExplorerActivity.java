@@ -55,6 +55,11 @@ public class ExplorerActivity extends BaseActivity {
         }
     }
 
+    @Override
+    public void onDocumentPicked(DocumentInfo doc) {
+
+    }
+
     public void onCurrentDirectoryChanged() {
         if(!Utils.isActivityAlive(ExplorerActivity.this)){
             return;

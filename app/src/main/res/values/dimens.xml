@@ -12,5 +12,11 @@
     <bool name="list_divider_inset_left">true</bool>
 
     <dimen name="expander_inset">8dp</dimen>
-
+    <dimen name="grid_item_padding">8dp</dimen>
+    <dimen name="grid_padding_vert">16dp</dimen>
+    <dimen name="grid_padding_horiz">16dp</dimen>
+    <dimen name="grid_item_width">160dp</dimen>
+    <dimen name="grid_item_height">176dp</dimen>
+    <dimen name="grid_icon_size">72dp</dimen>
+    <dimen name="grid_img_size">35dp</dimen>
 </resources>

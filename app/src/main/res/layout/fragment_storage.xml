@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
+        android:id="@+id/progressContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <com.pnikosis.materialishprogress.ProgressWheel
+            android:id="@+id/progressBar"
+            style="@style/ListProgress"
+            android:layout_width="@dimen/progress_bar_size"
+            android:layout_height="@dimen/progress_bar_size"
+            android:layout_gravity="center"
+            app:matProg_barColor="@color/colorPrimary"
+            app:matProg_progressIndeterminate="true"/>
+
+        <TextView
+            android:id="@+id/loading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="4dip"
+            android:maxLines="1"
+            android:text="@string/loading"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/listContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <com.hb.xtvfileexplorer.ui.xListView
+            android:id="@+id/list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:listSelector="@drawable/list_item_bg_focus"
+            android:drawSelectorOnTop="false" />
+
+        <GridView
+            android:id="@+id/grid"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:drawSelectorOnTop="true"
+            android:horizontalSpacing="@dimen/grid_item_padding"
+            android:paddingBottom="@dimen/grid_padding_vert"
+            android:paddingEnd="@dimen/grid_padding_horiz"
+            android:paddingLeft="@dimen/grid_padding_horiz"
+            android:paddingRight="@dimen/grid_padding_horiz"
+            android:paddingStart="@dimen/grid_padding_horiz"
+            android:paddingTop="@dimen/grid_padding_vert"
+            android:scrollbarStyle="outsideOverlay"
+            android:verticalSpacing="@dimen/grid_item_padding"
+            android:visibility="gone" />
+
+        <com.hb.xtvfileexplorer.ui.CompatTextView
+            android:id="@android:id/empty"
+            style="@style/TextAppearance.AppCompat.Subhead"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="@string/empty"
+            android:visibility="gone"
+            app:drawableTop="@drawable/ic_empty_file" />
+    </FrameLayout>
+
+</FrameLayout>

@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 
 import com.hb.xtvfileexplorer.loader.RootsLoader;
+import com.hb.xtvfileexplorer.model.DocumentInfo;
 import com.hb.xtvfileexplorer.model.RootInfo;
 import com.hb.xtvfileexplorer.provider.AppsProvider;
 import com.hb.xtvfileexplorer.provider.MediaProvider;
@@ -15,6 +16,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
 
     public abstract void onRootPicked(RootInfo root, boolean closeDrawer);
+    public abstract void onDocumentPicked(DocumentInfo doc);
 
     public static BaseActivity get(Fragment fragment) {
         return (BaseActivity) fragment.getActivity();

@@ -43,6 +43,8 @@ public class StorageProvider extends DocumentsProvider {
 
     private static final String TAG = "ExternalStorage";
     private static final String COLUMN_PATH = "path";
+    public static final String MIME_TYPE_HIDDEN = "vnd.android.document/hidden";
+
     public static final int FLAG_SUPER_ADVANCED = 1 << 91;
     public static final int FLAG_ADVANCED = 1 << 17;
     public static final int FLAG_SUPPORTS_EDIT = 1 << 18;

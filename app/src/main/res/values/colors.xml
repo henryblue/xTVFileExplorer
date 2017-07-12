@@ -9,7 +9,14 @@
     <color name="item_doc_video">#C74141</color>
     <color name="item_doc_image">#00838F</color>
 
+    <color name="list_item_bg_normal">#ffc400</color>
+    <color name="list_item_bg_press">#ffab00</color>
+    <color name="list_item_bg_selected">#e0e0e0</color>
+
     <color name="defaultThemeColor">#808080</color>
     <color name="grey_50">#fffafafa</color>
+    <color name="item_doc_grid_background">@color/material_grey_300</color>
+    <color name="item_doc_grid_protect_background">#88000000</color>
+    <color name="item_doc_grid_protect_background_light">#0a000000</color>
 
 </resources>

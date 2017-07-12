@@ -9,12 +9,14 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.os.Build;
 import android.os.RemoteException;
+import android.provider.DocumentsContract;
 import android.support.v4.text.TextUtilsCompat;
 import android.text.format.DateUtils;
 import android.text.format.Time;
 import android.util.DisplayMetrics;
 
 import com.hb.xtvfileexplorer.ExplorerActivity;
+import com.hb.xtvfileexplorer.misc.MimePredicate;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -155,5 +157,9 @@ public class Utils {
 
     public static boolean hasKitKat() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
+    }
+
+    public static boolean isDir(String mimeType) {
+        return MimePredicate.mimeMatches(DocumentsContract.Document.MIME_TYPE_DIR, mimeType);
     }
 }

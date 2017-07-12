@@ -6,8 +6,6 @@ import android.app.FragmentTransaction;
 import android.app.LoaderManager;
 import android.content.Context;
 import android.content.Loader;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
@@ -16,38 +14,47 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.DocumentsContract;
 import android.text.format.Formatter;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
+import android.widget.GridView;
 import android.widget.LinearLayout;
 
+import com.hb.xtvfileexplorer.BaseActivity;
 import com.hb.xtvfileexplorer.R;
 import com.hb.xtvfileexplorer.loader.DirectoryLoader;
 import com.hb.xtvfileexplorer.model.DirectoryResult;
 import com.hb.xtvfileexplorer.model.DocumentInfo;
 import com.hb.xtvfileexplorer.model.RootInfo;
 import com.hb.xtvfileexplorer.ui.CompatTextView;
+import com.hb.xtvfileexplorer.ui.GridItemView;
+import com.hb.xtvfileexplorer.ui.ItemView;
 import com.hb.xtvfileexplorer.ui.ListItemView;
 import com.hb.xtvfileexplorer.ui.xListView;
 import com.hb.xtvfileexplorer.utils.Utils;
 
+import static com.hb.xtvfileexplorer.provider.StorageProvider.MIME_TYPE_HIDDEN;
+
 
 public class StorageFragment extends Fragment {
 
-	private static final int mLoaderId = 42;
+	private static final int mLoaderId = 32;
+	private static final String TAG = "StorageFragment";
 
 	private xListView mListView;
 
 	private DocumentsAdapter mAdapter;
-	private LoaderManager.LoaderCallbacks<DirectoryResult> mCallbacks;
 
 	private static RootInfo mRootInfo;
 	private static DocumentInfo mDocInfo;
     private LinearLayout mProgressBarLayout;
 	private CompatTextView mEmptyView;
+	private GridView mGridView;
+	private boolean mIsInternalStorage;
 
 	public static void show(FragmentManager fm, RootInfo root, DocumentInfo doc) {
 		mRootInfo = root;
@@ -67,23 +74,34 @@ public class StorageFragment extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		final Context context = inflater.getContext();
         final Resources res = context.getResources();
-		final View view = inflater.inflate(R.layout.fragment_app, container, false);
+		final View view = inflater.inflate(R.layout.fragment_storage, container, false);
 
         mProgressBarLayout = (LinearLayout) view.findViewById(R.id.progressContainer);
 		mEmptyView = (CompatTextView) view.findViewById(android.R.id.empty);
-
+		mIsInternalStorage = mRootInfo.isInternalStorage();
 		mListView = (xListView) view.findViewById(R.id.list);
-		mListView.setOnItemClickListener(mItemListener);
+		mGridView = (GridView) view.findViewById(R.id.grid);
 
-        // Indent our list divider to align with text
-        final Drawable divider = mListView.getDivider();
-        final boolean insetLeft = res.getBoolean(R.bool.list_divider_inset_left);
-        final int insetSize = res.getDimensionPixelSize(R.dimen.list_divider_inset);
-        if (insetLeft) {
-            mListView.setDivider(new InsetDrawable(divider, insetSize, 0, 0, 0));
-        } else {
-            mListView.setDivider(new InsetDrawable(divider, 0, 0, insetSize, 0));
-        }
+		if (!mIsInternalStorage) {
+			mListView.setOnItemClickListener(mItemListener);
+
+			// Indent our list divider to align with text
+			final Drawable divider = mListView.getDivider();
+			final boolean insetLeft = res.getBoolean(R.bool.list_divider_inset_left);
+			final int insetSize = res.getDimensionPixelSize(R.dimen.list_divider_inset);
+			if (insetLeft) {
+				mListView.setDivider(new InsetDrawable(divider, insetSize, 0, 0, 0));
+			} else {
+				mListView.setDivider(new InsetDrawable(divider, 0, 0, insetSize, 0));
+			}
+		} else {
+			mListView.setVisibility(View.GONE);
+			int gridWidth = getResources().getDimensionPixelOffset(R.dimen.grid_item_width);
+			mGridView.setColumnWidth(gridWidth);
+			mGridView.setNumColumns(GridView.AUTO_FIT);
+			mGridView.setOnItemClickListener(mItemListener);
+			mGridView.setVisibility(View.VISIBLE);
+		}
 
 		return view;
 	}
@@ -97,10 +115,12 @@ public class StorageFragment extends Fragment {
 
 		mAdapter = new DocumentsAdapter();
 
-		mCallbacks = new LoaderManager.LoaderCallbacks<DirectoryResult>() {
+		LoaderManager.LoaderCallbacks<DirectoryResult> mCallbacks =
+				new LoaderManager.LoaderCallbacks<DirectoryResult>() {
 			@Override
 			public Loader<DirectoryResult> onCreateLoader(int id, Bundle args) {
 				Uri contentsUri = DocumentsContract.buildChildDocumentsUri(mDocInfo.authority, mDocInfo.documentId);
+				Log.i(TAG, "onCreateLoader: ===contentsUri==" + contentsUri);
 				return new DirectoryLoader(context, contentsUri);
 			}
 
@@ -108,8 +128,8 @@ public class StorageFragment extends Fragment {
 			public void onLoadFinished(Loader<DirectoryResult> loader, DirectoryResult result) {
 				if (!isAdded())
 					return;
+				Log.i(TAG, "onLoadFinished: ==result==" + result.cursor);
 				mAdapter.swapResult(result);
-                mListView.requestFocus();
 			}
 
 			@Override
@@ -117,7 +137,12 @@ public class StorageFragment extends Fragment {
 				mAdapter.swapResult(null);
 			}
 		};
-		mListView.setAdapter(mAdapter);
+
+		if (mIsInternalStorage) {
+			mGridView.setAdapter(mAdapter);
+		} else {
+			mListView.setAdapter(mAdapter);
+		}
 		getLoaderManager().restartLoader(mLoaderId, null, mCallbacks);
 	}
 
@@ -129,21 +154,35 @@ public class StorageFragment extends Fragment {
 		}
 	}
 
+	private boolean isDocumentEnabled(String docMimeType, int docFlags) {
+		if (MIME_TYPE_HIDDEN.equals(docMimeType)) {
+			return false;
+		}
+		// Directories are always enabled
+		if (Utils.isDir(docMimeType)) {
+			return true;
+		}
+
+		// Read-only files are disabled when creating
+		if ((docFlags & DocumentsContract.Document.FLAG_SUPPORTS_WRITE) == 0) {
+			return false;
+		}
+
+		return false;
+	}
+
 	private OnItemClickListener mItemListener = new OnItemClickListener() {
 		@Override
 		public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//            final Cursor cursor = mAdapter.getItem(position);
-//            if (cursor != null) {
-//                final String docId = RootInfo.getCursorString(cursor, DocumentsContract.Document.COLUMN_DOCUMENT_ID);
-//                if (null != mRootInfo && mRootInfo.isApp()) {
-//                    String packageName = AppsProvider.getPackageForDocId(docId);
-//                    PackageManager pm = getActivity().getPackageManager();
-//                    Intent intent = pm.getLaunchIntentForPackage(packageName);
-//                    if (intent != null) {
-//                        startActivity(intent);
-//                    }
-//                }
-//            }
+            final Cursor cursor = mAdapter.getItem(position);
+            if (cursor != null) {
+				final String docMimeType = RootInfo.getCursorString(cursor, DocumentsContract.Document.COLUMN_MIME_TYPE);
+				final int docFlags = RootInfo.getCursorInt(cursor, DocumentsContract.Document.COLUMN_FLAGS);
+				if (isDocumentEnabled(docMimeType, docFlags)) {
+					final DocumentInfo doc = DocumentInfo.fromDirectoryCursor(cursor);
+					((BaseActivity) getActivity()).onDocumentPicked(doc);
+				}
+            }
 		}
 	};
 
@@ -185,11 +224,11 @@ public class StorageFragment extends Fragment {
 
 		private View getDocumentView(int position, View convertView, ViewGroup parent) {
 			final Context context = parent.getContext();
-            ListItemView itemView;
+            ItemView itemView;
 			if (convertView == null) {
-                itemView = new ListItemView(context);
+                itemView = mIsInternalStorage ? new GridItemView(context) : new ListItemView(context);
 			} else {
-                itemView = (ListItemView) convertView;
+                itemView = (ItemView) convertView;
             }
 
 			final Cursor cursor = getItem(position);
@@ -197,23 +236,21 @@ public class StorageFragment extends Fragment {
 			final long docLastModified = RootInfo.getCursorLong(cursor, DocumentsContract.Document.COLUMN_LAST_MODIFIED);
 			final String docSummary = RootInfo.getCursorString(cursor, DocumentsContract.Document.COLUMN_SUMMARY);
 			final long docSize = RootInfo.getCursorLong(cursor, DocumentsContract.Document.COLUMN_SIZE);
+			final String mimiType = RootInfo.getCursorString(cursor, DocumentsContract.Document.COLUMN_MIME_TYPE);
 
-			PackageManager pm = context.getPackageManager();
-			try {
-				PackageInfo info = pm.getPackageInfo(docSummary, 0);
-				Drawable drawable = info.applicationInfo.loadIcon(pm);
-				if (drawable != null) {
-                    itemView.setIcon(drawable);
-				}
-			} catch (PackageManager.NameNotFoundException e) {
-                itemView.setIconResource(R.mipmap.ic_launcher);
-			}
 			itemView.setTitle(docDisplayName);
-            itemView.setDate(Utils.formatTime(context, docLastModified));
-            if (!mRootInfo.isAppProcess()) {
-                itemView.setSummary(docSummary);
-            }
-            itemView.setSize(Formatter.formatFileSize(context, docSize));
+			itemView.setDate(Utils.formatTime(context, docLastModified));
+			if (mIsInternalStorage) {
+				if (mimiType != null && Utils.isDir(mimiType)) {
+					itemView.setIconResource(R.drawable.item_dir);
+					itemView.setBackgroundColor();
+				} else {
+					itemView.setIconResource(R.drawable.item_file);
+				}
+			} else {
+				itemView.setSummary(docSummary);
+			}
+			itemView.setSize(Formatter.formatFileSize(context, docSize));
 			return itemView;
 		}
 	}
