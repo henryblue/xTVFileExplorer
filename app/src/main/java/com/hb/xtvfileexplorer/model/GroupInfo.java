@@ -5,7 +5,6 @@ import com.hb.xtvfileexplorer.fragment.RootsFragment.Item;
 
 import java.util.List;
 
-;
 
 public class GroupInfo {
     public String label;

@@ -120,7 +120,6 @@ public class StorageFragment extends Fragment {
 			@Override
 			public Loader<DirectoryResult> onCreateLoader(int id, Bundle args) {
 				Uri contentsUri = DocumentsContract.buildChildDocumentsUri(mDocInfo.authority, mDocInfo.documentId);
-				Log.i(TAG, "onCreateLoader: ===contentsUri==" + contentsUri);
 				return new DirectoryLoader(context, contentsUri);
 			}
 
@@ -128,7 +127,6 @@ public class StorageFragment extends Fragment {
 			public void onLoadFinished(Loader<DirectoryResult> loader, DirectoryResult result) {
 				if (!isAdded())
 					return;
-				Log.i(TAG, "onLoadFinished: ==result==" + result.cursor);
 				mAdapter.swapResult(result);
 			}
 
@@ -179,7 +177,7 @@ public class StorageFragment extends Fragment {
 				final String docMimeType = RootInfo.getCursorString(cursor, DocumentsContract.Document.COLUMN_MIME_TYPE);
 				final int docFlags = RootInfo.getCursorInt(cursor, DocumentsContract.Document.COLUMN_FLAGS);
 				if (isDocumentEnabled(docMimeType, docFlags)) {
-					final DocumentInfo doc = DocumentInfo.fromDirectoryCursor(cursor);
+					final DocumentInfo doc = DocumentInfo.fromDirectoryCursor(cursor, mRootInfo.getAuthority());
 					((BaseActivity) getActivity()).onDocumentPicked(doc);
 				}
             }

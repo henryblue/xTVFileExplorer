@@ -132,7 +132,9 @@ public class DocumentInfo {
         return DocumentsContract.Document.MIME_TYPE_DIR.equals(mimeType);
     }
 
-    public static DocumentInfo fromDirectoryCursor(Cursor cursor) {
-        return null;
+    public static DocumentInfo fromDirectoryCursor(Cursor cursor, String authority) {
+        final DocumentInfo info = new DocumentInfo();
+        info.updateFromCursor(cursor, authority);
+        return info;
     }
 }
