@@ -127,4 +127,8 @@ public class DocumentInfo {
             Utils.releaseQuietly(client);
         }
     }
+
+    public boolean isDirectory() {
+        return DocumentsContract.Document.MIME_TYPE_DIR.equals(mimeType);
+    }
 }

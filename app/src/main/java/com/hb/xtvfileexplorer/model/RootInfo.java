@@ -9,6 +9,7 @@ import android.provider.DocumentsContract.Root;
 import com.hb.xtvfileexplorer.R;
 import com.hb.xtvfileexplorer.provider.AppsProvider;
 import com.hb.xtvfileexplorer.provider.MediaProvider;
+import com.hb.xtvfileexplorer.provider.StorageProvider;
 import com.hb.xtvfileexplorer.utils.IconUtils;
 
 
@@ -164,7 +165,16 @@ public class RootInfo {
         derivedColor = R.color.item_doc_doc;
         derivedTag = title;
 
-        if (isUserApp()) {
+        if (isInternalStorage()) {
+            derivedIcon = R.drawable.ic_root_internal;
+            derivedTag = "storage";
+        } else if (isExternalStorage()) {
+            derivedIcon = R.drawable.ic_root_sdcard;
+            derivedTag = "external_storage";
+        } else if (isPhoneStorage()) {
+            derivedIcon = R.drawable.ic_root_phone;
+            derivedTag = "phone";
+        } else if (isUserApp()) {
             derivedIcon = R.drawable.ic_root_apps;
             derivedColor = R.color.item_doc_apps;
             derivedTag = "user_apps";
@@ -227,6 +237,33 @@ public class RootInfo {
         final int index = cursor.getColumnIndex(columnName);
         return (index != -1) && cursor.getInt(index) == 1;
     }
+    public boolean isHome() {
+        return authority == null && "home".equals(rootId);
+    }
+
+    public boolean isStorage() {
+        return isInternalStorage() || isExternalStorage() || isSecondaryStorage();
+    }
+
+    public boolean isExternalStorage() {
+        return StorageProvider.AUTHORITY.equals(authority)
+                && StorageProvider.ROOT_ID_PRIMARY_EMULATED.equals(rootId);
+    }
+
+    public boolean isInternalStorage() {
+        return StorageProvider.AUTHORITY.equals(authority)
+                && (title.toLowerCase().contains("internal") || title.contains("内部"));
+    }
+
+    public boolean isPhoneStorage() {
+        return StorageProvider.AUTHORITY.equals(authority)
+                && StorageProvider.ROOT_ID_PHONE.equals(rootId);
+    }
+
+    public boolean isSecondaryStorage() {
+        return StorageProvider.AUTHORITY.equals(authority)
+                && rootId.startsWith(StorageProvider.ROOT_ID_SECONDARY);
+    }
 
     public boolean isLibraryMedia(){
         return isImages() || isVideos() || isAudio();
@@ -239,6 +276,10 @@ public class RootInfo {
     public static void setTypeIndex(RootInfo info, String rootId) {
         info.setAuthority(MediaProvider.AUTHORITY);
         info.setRootId(rootId);
+    }
+
+    public static boolean isStorage(RootInfo root){
+        return root.isHome() || root.isPhoneStorage() || root.isStorage();
     }
 
     public boolean isImages() {
@@ -285,5 +326,4 @@ public class RootInfo {
             return IconUtils.loadPackageIcon(context, authority, icon);
         }
     }
-
 }

@@ -9,6 +9,7 @@ import com.hb.xtvfileexplorer.loader.RootsLoader;
 import com.hb.xtvfileexplorer.model.RootInfo;
 import com.hb.xtvfileexplorer.provider.AppsProvider;
 import com.hb.xtvfileexplorer.provider.MediaProvider;
+import com.hb.xtvfileexplorer.provider.StorageProvider;
 
 public abstract class BaseActivity extends AppCompatActivity {
 
@@ -22,8 +23,9 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        RootsLoader.addAuthority(AppsProvider.AUTHORITY);
+        RootsLoader.addAuthority(StorageProvider.AUTHORITY);
         RootsLoader.addAuthority(MediaProvider.AUTHORITY);
+        RootsLoader.addAuthority(AppsProvider.AUTHORITY);
     }
 
     public RootInfo getCurrentRoot() {

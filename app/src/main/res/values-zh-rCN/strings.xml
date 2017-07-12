@@ -8,7 +8,11 @@
     <string name="loading">加载中...</string>
     <string name="app_no_data">没有数据, 请重试!</string>
     <string name="empty">无任何文件</string>
-    <string name="image">图片</string>
-    <string name="video">视频</string>
-    <string name="audio">音乐</string>
+    <string name="root_images">图片</string>
+    <string name="root_videos">视频</string>
+    <string name="root_audio">音乐</string>
+    <string name="label_storage">存储</string>
+    <string name="root_internal_storage">内部存储</string>
+    <string name="root_external_storage">外部存储</string>
+    <string name="root_phone_storage">全部文件</string>
 </resources>

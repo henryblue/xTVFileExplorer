@@ -31,27 +31,50 @@ public class RootsExpandableAdapter extends BaseExpandableListAdapter {
 
     private void processRoots(Collection<RootInfo> roots) {
         List<GroupInfo> groupRoots = new ArrayList<>();
+        final List<Item> home = new ArrayList<>();
+        final List<Item> phone = new ArrayList<>();
+        final List<Item> storage = new ArrayList<>();
+        final List<Item> secondaryStorage = new ArrayList<>();
+
         final List<Item> medias = new ArrayList<>();
         final List<Item> apps = new ArrayList<>();
 
         for (RootInfo rootInfo : roots) {
-            if (rootInfo.isApp()) {
+            if (rootInfo.isHome()) {
+                home.add(new RootItem(rootInfo));
+            } else if (rootInfo.isApp()) {
                 apps.add(new RootItem(rootInfo));
             } else if (rootInfo.isLibraryMedia()) {
                 medias.add(new RootItem(rootInfo));
+            } else if (rootInfo.isPhoneStorage()) {
+                phone.add(new RootItem(rootInfo));
+            } else if (RootInfo.isStorage(rootInfo)) {
+                if (rootInfo.isSecondaryStorage()) {
+                    secondaryStorage.add(new RootItem(rootInfo));
+                } else {
+                    storage.add(new RootItem(rootInfo));
+                }
             }
         }
 
-        String label = mContext.getString(R.string.label_medias);
+        String label = mContext.getString(R.string.label_storage);
+        if(!home.isEmpty() || !storage.isEmpty() || !phone.isEmpty()){
+            home.addAll(storage);
+            home.addAll(secondaryStorage);
+            home.addAll(phone);
+            groupRoots.add(new GroupInfo(label, home));
+        }
+
+        label = mContext.getString(R.string.label_medias);
         if(!medias.isEmpty()){
             groupRoots.add(new GroupInfo(label, medias));
         } else {
             // 伪造数据, 显示媒体信息
-            medias.add(generateRootItem(mContext.getString(R.string.video),
+            medias.add(generateRootItem(mContext.getString(R.string.root_videos),
                     MediaProvider.TYPE_VIDEOS_ROOT));
-            medias.add(generateRootItem(mContext.getString(R.string.image),
+            medias.add(generateRootItem(mContext.getString(R.string.root_images),
                     MediaProvider.TYPE_IMAGES_ROOT));
-            medias.add(generateRootItem(mContext.getString(R.string.audio),
+            medias.add(generateRootItem(mContext.getString(R.string.root_audio),
                     MediaProvider.TYPE_AUDIO_ROOT));
             groupRoots.add(new GroupInfo(label, medias));
         }

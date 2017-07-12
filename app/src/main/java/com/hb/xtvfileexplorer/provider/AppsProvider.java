@@ -22,7 +22,7 @@ import android.util.SparseArray;
 
 import com.hb.xtvfileexplorer.BuildConfig;
 import com.hb.xtvfileexplorer.R;
-import com.hb.xtvfileexplorer.utils.StorageUtils;
+import com.hb.xtvfileexplorer.misc.StorageUtils;
 import com.hb.xtvfileexplorer.utils.Utils;
 import com.jaredrummler.android.processes.AndroidProcesses;
 import com.jaredrummler.android.processes.models.AndroidAppProcess;

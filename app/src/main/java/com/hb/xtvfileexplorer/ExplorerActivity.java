@@ -12,6 +12,7 @@ import android.util.Log;
 import com.hb.xtvfileexplorer.fragment.AppsFragment;
 import com.hb.xtvfileexplorer.fragment.MediasFragment;
 import com.hb.xtvfileexplorer.fragment.RootsFragment;
+import com.hb.xtvfileexplorer.fragment.StorageFragment;
 import com.hb.xtvfileexplorer.model.DocumentInfo;
 import com.hb.xtvfileexplorer.model.RootInfo;
 import com.hb.xtvfileexplorer.utils.Utils;
@@ -79,6 +80,8 @@ public class ExplorerActivity extends BaseActivity {
             AppsFragment.show(fm, root, cwd);
         } else if (mRoot.isLibraryMedia()){
             MediasFragment.show(fm, root, cwd);
+        } else if (RootInfo.isStorage(mRoot)) {
+            StorageFragment.show(fm, root, cwd);
         }
 
         final RootsFragment roots = RootsFragment.get(fm);
@@ -109,6 +112,9 @@ public class ExplorerActivity extends BaseActivity {
         @Override
         protected void onPostExecute(DocumentInfo result) {
             mDocInfo = result;
+            Log.d(TAG, "onPostExecute: ==documentId=" + mDocInfo.documentId);
+            Log.d(TAG, "onPostExecute: ==documentId=" + mDocInfo.authority);
+            Log.d(TAG, "onPostExecute: ==documentId=" + mDocInfo.summary);
             if(!Utils.isActivityAlive(ExplorerActivity.this)){
                 return;
             }
