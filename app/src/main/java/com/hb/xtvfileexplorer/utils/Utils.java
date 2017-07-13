@@ -4,6 +4,9 @@ import android.app.UiModeManager;
 import android.content.ContentProviderClient;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.database.Cursor;
@@ -21,6 +24,7 @@ import com.hb.xtvfileexplorer.misc.MimePredicate;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
+import java.util.List;
 import java.util.Locale;
 import java.util.zip.ZipFile;
 
@@ -161,5 +165,12 @@ public class Utils {
 
     public static boolean isDir(String mimeType) {
         return MimePredicate.mimeMatches(DocumentsContract.Document.MIME_TYPE_DIR, mimeType);
+    }
+
+    public static boolean isIntentAvailable(Context context, Intent intent) {
+        final PackageManager packageManager = context.getPackageManager();
+        List<ResolveInfo> list =
+                packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
+        return list.size() > 0;
     }
 }

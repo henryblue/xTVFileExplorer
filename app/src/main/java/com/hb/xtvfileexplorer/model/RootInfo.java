@@ -172,7 +172,7 @@ public class RootInfo {
             derivedIcon = R.drawable.ic_root_sdcard;
             derivedTag = "external_storage";
         } else if (isPhoneStorage()) {
-            derivedIcon = R.drawable.ic_root_phone;
+            derivedIcon = R.drawable.ic_root_device;
             derivedTag = "phone";
         } else if (isUserApp()) {
             derivedIcon = R.drawable.ic_root_apps;

@@ -14,6 +14,7 @@ import com.hb.xtvfileexplorer.provider.StorageProvider;
 
 public abstract class BaseActivity extends AppCompatActivity {
 
+    public static String[] mAcceptMimes;
 
     public abstract void onRootPicked(RootInfo root, boolean closeDrawer);
     public abstract void onDocumentPicked(DocumentInfo doc);
@@ -25,6 +26,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mAcceptMimes = new String[]{"*/*"};
         RootsLoader.addAuthority(StorageProvider.AUTHORITY);
         RootsLoader.addAuthority(MediaProvider.AUTHORITY);
         RootsLoader.addAuthority(AppsProvider.AUTHORITY);

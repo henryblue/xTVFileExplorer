@@ -15,5 +15,6 @@
     <string name="root_internal_storage">Internal Storage</string>
     <string name="root_external_storage">External Storage</string>
     <string name="root_phone_storage">Device Storage</string>
+    <string name="toast_no_application">Can\'t open file</string>
 
 </resources>

@@ -15,4 +15,5 @@
     <string name="root_internal_storage">内部存储</string>
     <string name="root_external_storage">外部存储</string>
     <string name="root_phone_storage">全部文件</string>
+    <string name="toast_no_application">无法打开指定文件</string>
 </resources>

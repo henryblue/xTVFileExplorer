@@ -2,23 +2,29 @@ package com.hb.xtvfileexplorer;
 
 
 import android.app.FragmentManager;
+import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.DocumentsContract;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.View;
 
 import com.hb.xtvfileexplorer.archive.DocumentArchiveHelper;
 import com.hb.xtvfileexplorer.fragment.AppsFragment;
 import com.hb.xtvfileexplorer.fragment.MediasFragment;
 import com.hb.xtvfileexplorer.fragment.RootsFragment;
 import com.hb.xtvfileexplorer.fragment.StorageFragment;
+import com.hb.xtvfileexplorer.misc.MimePredicate;
 import com.hb.xtvfileexplorer.model.DocumentInfo;
 import com.hb.xtvfileexplorer.model.DocumentStack;
 import com.hb.xtvfileexplorer.model.RootInfo;
 import com.hb.xtvfileexplorer.utils.Utils;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 
 import static com.hb.xtvfileexplorer.fragment.RootsFragment.TAG;
@@ -73,7 +79,48 @@ public class ExplorerActivity extends BaseActivity {
         mDocStack.push(doc);
         if (doc.isDirectory() || DocumentArchiveHelper.isSupportedArchiveType(doc.mimeType)) {
             onCurrentDirectoryChanged();
+        } else {
+            // Fall back to viewing
+            final Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION
+                    | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+            intent.setDataAndType(doc.derivedUri, doc.mimeType);
+            if((MimePredicate.mimeMatches(MimePredicate.SPECIAL_MIMES, doc.mimeType)
+                    || !Utils.isIntentAvailable(this, intent)) && !Utils.hasNougat()){
+                try {
+                    File file = new File(doc.path);
+                    intent.setDataAndType(Uri.fromFile(file), doc.mimeType);
+                } catch (Exception e) {
+                    intent.setDataAndType(doc.derivedUri, doc.mimeType);
+                }
+            }
+
+            if(Utils.isIntentAvailable(this, intent)){
+                try {
+                    startActivity(intent);
+                } catch (Exception e){
+                    //
+                }
+            }
+            else{
+                showError(R.string.toast_no_application);
+            }
         }
+    }
+
+    private void showError(int msg) {
+        showToast(msg, Color.RED, Snackbar.LENGTH_SHORT);
+    }
+
+    public void showToast(int msg, int actionColor, int duration){
+        final Snackbar snackbar = Snackbar.make(findViewById(R.id.container_directory), msg, duration);
+        snackbar.setAction(android.R.string.ok, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                snackbar.dismiss();
+            }
+        }).setActionTextColor(actionColor).show();
     }
 
     public void onCurrentDirectoryChanged() {

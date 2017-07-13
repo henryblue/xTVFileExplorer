@@ -27,6 +27,7 @@ import android.widget.LinearLayout;
 import com.hb.xtvfileexplorer.BaseActivity;
 import com.hb.xtvfileexplorer.R;
 import com.hb.xtvfileexplorer.loader.DirectoryLoader;
+import com.hb.xtvfileexplorer.misc.MimePredicate;
 import com.hb.xtvfileexplorer.model.DirectoryResult;
 import com.hb.xtvfileexplorer.model.DocumentInfo;
 import com.hb.xtvfileexplorer.model.RootInfo;
@@ -128,6 +129,11 @@ public class StorageFragment extends Fragment {
 				if (!isAdded())
 					return;
 				mAdapter.swapResult(result);
+				if (mIsInternalStorage) {
+					mGridView.requestFocus();
+				} else {
+					mListView.requestFocus();
+				}
 			}
 
 			@Override
@@ -153,6 +159,7 @@ public class StorageFragment extends Fragment {
 	}
 
 	private boolean isDocumentEnabled(String docMimeType, int docFlags) {
+		Log.i(TAG, "isDocumentEnabled: ==docMimeType==" + docMimeType);
 		if (MIME_TYPE_HIDDEN.equals(docMimeType)) {
 			return false;
 		}
@@ -161,12 +168,12 @@ public class StorageFragment extends Fragment {
 			return true;
 		}
 
-		// Read-only files are disabled when creating
-		if ((docFlags & DocumentsContract.Document.FLAG_SUPPORTS_WRITE) == 0) {
-			return false;
-		}
+//		// Read-only files are disabled when creating
+//		if ((docFlags & DocumentsContract.Document.FLAG_SUPPORTS_WRITE) == 0) {
+//			return false;
+//		}
 
-		return false;
+		return MimePredicate.mimeMatches("*/*", docMimeType);
 	}
 
 	private OnItemClickListener mItemListener = new OnItemClickListener() {
@@ -177,6 +184,7 @@ public class StorageFragment extends Fragment {
 				final String docMimeType = RootInfo.getCursorString(cursor, DocumentsContract.Document.COLUMN_MIME_TYPE);
 				final int docFlags = RootInfo.getCursorInt(cursor, DocumentsContract.Document.COLUMN_FLAGS);
 				if (isDocumentEnabled(docMimeType, docFlags)) {
+					Log.i(TAG, "onItemClick: isDocumentEnabled==============");
 					final DocumentInfo doc = DocumentInfo.fromDirectoryCursor(cursor, mRootInfo.getAuthority());
 					((BaseActivity) getActivity()).onDocumentPicked(doc);
 				}
@@ -238,16 +246,21 @@ public class StorageFragment extends Fragment {
 
 			itemView.setTitle(docDisplayName);
 			itemView.setDate(Utils.formatTime(context, docLastModified));
-			if (mIsInternalStorage) {
-				if (mimiType != null && Utils.isDir(mimiType)) {
+			if (mimiType != null && Utils.isDir(mimiType)) {
+				if (mIsInternalStorage) {
 					itemView.setIconResource(R.drawable.item_dir);
 					itemView.setBackgroundColor();
 				} else {
-					itemView.setIconResource(R.drawable.item_file);
+					itemView.setIconResource(R.drawable.ic_doc_folder);
 				}
 			} else {
-				itemView.setSummary(docSummary);
+				if (mIsInternalStorage) {
+					itemView.setIconResource(R.drawable.item_file);
+				} else {
+					itemView.setIconResource(R.drawable.ic_doc_text);
+				}
 			}
+			itemView.setSummary(docSummary);
 			itemView.setSize(Formatter.formatFileSize(context, docSize));
 			return itemView;
 		}

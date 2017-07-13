@@ -163,7 +163,7 @@ public class StorageProvider extends DocumentsProvider {
 
     private void includeOtherRoot() {
         try {
-            final String rootId = ROOT_ID_HOME;
+            final String rootId = ROOT_ID_PHONE;
             final File path = Utils.hasNougat() ? Environment.getRootDirectory() : new File(DIR_ROOT);
             final RootInfo root = new RootInfo();
             mRoots.put(rootId, root);
@@ -405,10 +405,13 @@ public class StorageProvider extends DocumentsProvider {
         }
 
         final File parent = getFileForDocId(parentDocumentId);
+        if (parent.listFiles() == null) {
+            return null;
+        }
         final MatrixCursor result = new DirectoryCursor(
                 resolveDocumentProjection(projection), parentDocumentId, parent);
-        for (File file : parent.listFiles()) {
-            includeFile(result, null, file);
+            for (File file : parent.listFiles()) {
+                includeFile(result, null, file);
         }
         return result;
     }
