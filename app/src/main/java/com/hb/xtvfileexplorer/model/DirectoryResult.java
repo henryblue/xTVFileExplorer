@@ -10,7 +10,7 @@ import java.io.Closeable;
 public class DirectoryResult implements Closeable {
 	public ContentProviderClient client;
     public Cursor cursor;
-
+    public Exception exception;
 
     @Override
     public void close() {

@@ -110,7 +110,7 @@ public class AppsFragment extends Fragment {
 					mProgressBarLayout.setVisibility(View.GONE);
 				}
 				Uri contentsUri = DocumentsContract.buildChildDocumentsUri(mDocInfo.authority, mDocInfo.documentId);
-				return new DirectoryLoader(context, contentsUri);
+				return new DirectoryLoader(context, contentsUri, DirectoryLoader.SORT_ORDER_NONE);
 			}
 
 			@Override

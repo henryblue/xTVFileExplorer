@@ -12,6 +12,7 @@ import android.support.v4.provider.DocumentFile;
 import android.text.TextUtils;
 import android.webkit.MimeTypeMap;
 
+import com.hb.xtvfileexplorer.R;
 import com.hb.xtvfileexplorer.provider.StorageProvider;
 
 import java.io.File;
@@ -57,9 +58,11 @@ public class FileUtils {
         return BASIC_MIME_TYPE;
     }
 
-    public static String formatFileCount(int count) {
+    public static String formatFileCount(Context context, int count) {
         String value = NumberFormat.getInstance().format(count);
-        return count == 0 ? "empty" : value + " file" + (count == 1 ? "" : "s");
+        String fileIndex = context.getString(R.string.index_file);
+        String empty = context.getString(R.string.index_empty);
+        return count == 0 ? empty : value + " " + fileIndex;
     }
 
     private static Uri buildDocumentUriUsingTree(Uri treeUri, String documentId) {

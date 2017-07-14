@@ -75,7 +75,7 @@ public class MediasFragment extends Fragment {
 			public Loader<DirectoryResult> onCreateLoader(int id, Bundle args) {
 
 				Uri contentsUri = DocumentsContract.buildChildDocumentsUri(mDocInfo.authority, mDocInfo.documentId);
-				return new DirectoryLoader(context, contentsUri);
+				return new DirectoryLoader(context, contentsUri, DirectoryLoader.SORT_ORDER_NONE);
 			}
 
 			@Override

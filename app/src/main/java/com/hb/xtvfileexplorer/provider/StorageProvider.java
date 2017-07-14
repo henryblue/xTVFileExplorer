@@ -330,7 +330,7 @@ public class StorageProvider extends DocumentsProvider {
         row.add(COLUMN_PATH, file.getAbsolutePath());
         row.add(Document.COLUMN_FLAGS, flags);
         if(file.isDirectory() && null != file.list()){
-            row.add(Document.COLUMN_SUMMARY, FileUtils.formatFileCount(file.list().length));
+            row.add(Document.COLUMN_SUMMARY, FileUtils.formatFileCount(getContext(), file.list().length));
         }
 
         // Only publish dates reasonably after epoch
@@ -480,7 +480,7 @@ public class StorageProvider extends DocumentsProvider {
     private class DirectoryCursor extends MatrixCursor {
         private final File mFile;
 
-        public DirectoryCursor(String[] columnNames, String docId, File file) {
+        DirectoryCursor(String[] columnNames, String docId, File file) {
             super(columnNames);
 
             final Uri notifyUri = DocumentsContract.buildChildDocumentsUri(AUTHORITY, docId);

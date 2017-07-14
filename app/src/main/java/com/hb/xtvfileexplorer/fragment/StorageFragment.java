@@ -14,7 +14,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.DocumentsContract;
 import android.text.format.Formatter;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -121,7 +120,7 @@ public class StorageFragment extends Fragment {
 			@Override
 			public Loader<DirectoryResult> onCreateLoader(int id, Bundle args) {
 				Uri contentsUri = DocumentsContract.buildChildDocumentsUri(mDocInfo.authority, mDocInfo.documentId);
-				return new DirectoryLoader(context, contentsUri);
+				return new DirectoryLoader(context, contentsUri, DirectoryLoader.SORT_ORDER_DISPLAY_NAME);
 			}
 
 			@Override
@@ -159,7 +158,6 @@ public class StorageFragment extends Fragment {
 	}
 
 	private boolean isDocumentEnabled(String docMimeType, int docFlags) {
-		Log.i(TAG, "isDocumentEnabled: ==docMimeType==" + docMimeType);
 		if (MIME_TYPE_HIDDEN.equals(docMimeType)) {
 			return false;
 		}
@@ -184,7 +182,6 @@ public class StorageFragment extends Fragment {
 				final String docMimeType = RootInfo.getCursorString(cursor, DocumentsContract.Document.COLUMN_MIME_TYPE);
 				final int docFlags = RootInfo.getCursorInt(cursor, DocumentsContract.Document.COLUMN_FLAGS);
 				if (isDocumentEnabled(docMimeType, docFlags)) {
-					Log.i(TAG, "onItemClick: isDocumentEnabled==============");
 					final DocumentInfo doc = DocumentInfo.fromDirectoryCursor(cursor, mRootInfo.getAuthority());
 					((BaseActivity) getActivity()).onDocumentPicked(doc);
 				}
@@ -199,8 +196,14 @@ public class StorageFragment extends Fragment {
 		void swapResult(DirectoryResult result) {
 			mCursor = result != null ? result.cursor : null;
 			mCursorCount = mCursor != null ? mCursor.getCount() : 0;
-			setEmptyState();
-			notifyDataSetChanged();
+            if (result != null && result.exception != null) {
+                mEmptyView.setDrawables(0, R.drawable.ic_dialog_alert, 0, 0);
+                mEmptyView.setText(getContext().getString(R.string.query_error));
+                mEmptyView.setVisibility(View.VISIBLE);
+            } else {
+                setEmptyState();
+                notifyDataSetChanged();
+            }
 		}
 
 		@Override

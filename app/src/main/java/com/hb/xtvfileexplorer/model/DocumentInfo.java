@@ -5,10 +5,12 @@ import android.content.ContentResolver;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.DocumentsContract;
+import android.text.TextUtils;
 
 import com.hb.xtvfileexplorer.utils.Utils;
 
 import java.io.FileNotFoundException;
+import java.text.Collator;
 
 
 public class DocumentInfo {
@@ -136,5 +138,39 @@ public class DocumentInfo {
         final DocumentInfo info = new DocumentInfo();
         info.updateFromCursor(cursor, authority);
         return info;
+    }
+
+    private static final Collator sCollator;
+
+    static {
+        sCollator = Collator.getInstance();
+        sCollator.setStrength(Collator.SECONDARY);
+    }
+
+    /**
+     * String prefix used to indicate the document is a directory.
+     */
+    public static final char DIR_PREFIX = '\001';
+
+    /**
+     * Compare two strings against each other using system default collator in a
+     * case-insensitive mode. Clusters strings prefixed with {@link #DIR_PREFIX}
+     * before other items.
+     */
+    public static int compareToIgnoreCaseNullable(String lhs, String rhs) {
+        final boolean leftEmpty = TextUtils.isEmpty(lhs);
+        final boolean rightEmpty = TextUtils.isEmpty(rhs);
+
+        if (leftEmpty && rightEmpty) return 0;
+        if (leftEmpty) return -1;
+        if (rightEmpty) return 1;
+
+        final boolean leftDir = (lhs.charAt(0) == DIR_PREFIX);
+        final boolean rightDir = (rhs.charAt(0) == DIR_PREFIX);
+
+        if (leftDir && !rightDir) return -1;
+        if (rightDir && !leftDir) return 1;
+
+        return sCollator.compare(lhs, rhs);
     }
 }

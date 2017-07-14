@@ -16,5 +16,8 @@
     <string name="root_external_storage">External Storage</string>
     <string name="root_phone_storage">Device Storage</string>
     <string name="toast_no_application">Can\'t open file</string>
+    <string name="index_file">file</string>
+    <string name="index_empty">empty</string>
+    <string name="query_error">Failed to query documents</string>
 
 </resources>

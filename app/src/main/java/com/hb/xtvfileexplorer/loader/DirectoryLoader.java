@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.CancellationSignal;
 import android.os.OperationCanceledException;
 import android.os.RemoteException;
+import android.provider.DocumentsContract;
 
 import com.hb.xtvfileexplorer.model.DirectoryResult;
 import com.hb.xtvfileexplorer.utils.Utils;
@@ -17,13 +18,20 @@ import com.hb.xtvfileexplorer.utils.Utils;
 
 public class DirectoryLoader extends AsyncTaskLoader<DirectoryResult> {
 
+    public static final int SORT_ORDER_NONE = -1;
+    public static final int SORT_ORDER_DISPLAY_NAME = 1;
+    public static final int SORT_ORDER_LAST_MODIFIED = 2;
+    public static final int SORT_ORDER_SIZE = 3;
+
     private final Uri mUri;
     private CancellationSignal mSignal;
     private DirectoryResult mResult;
+    private int mSortOrder;
 
-    public DirectoryLoader(Context context, Uri uri) {
+    public DirectoryLoader(Context context, Uri uri, int sortOrder) {
         super(context);
         mUri = uri;
+        mSortOrder = sortOrder;
     }
 
     @Override
@@ -42,10 +50,14 @@ public class DirectoryLoader extends AsyncTaskLoader<DirectoryResult> {
         Cursor cursor;
         try {
             client = Utils.acquireUnstableProviderOrThrow(resolver, authority);
-            cursor = client.query(mUri, null, null, null, null);
+            cursor = client.query(mUri, null, null, null, getQuerySortOrder(mSortOrder));
+            if (mSortOrder != SORT_ORDER_NONE) {
+                cursor = new SortingCursorWrapper(cursor, mSortOrder);
+            }
             result.client = client;
             result.cursor = cursor;
         } catch (RemoteException e) {
+            result.exception = e;
             e.printStackTrace();
         } finally {
             Utils.releaseQuietly(client);
@@ -111,5 +123,18 @@ public class DirectoryLoader extends AsyncTaskLoader<DirectoryResult> {
 
         Utils.closeQuietly(mResult.cursor);
         mResult = null;
+    }
+
+    public static String getQuerySortOrder(int sortOrder) {
+        switch (sortOrder) {
+            case SORT_ORDER_DISPLAY_NAME:
+                return DocumentsContract.Document.COLUMN_DISPLAY_NAME + " ASC";
+            case SORT_ORDER_LAST_MODIFIED:
+                return DocumentsContract.Document.COLUMN_LAST_MODIFIED + " DESC";
+            case SORT_ORDER_SIZE:
+                return DocumentsContract.Document.COLUMN_SIZE + " DESC";
+            default:
+                return null;
+        }
     }
 }
