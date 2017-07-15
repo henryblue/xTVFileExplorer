@@ -51,7 +51,7 @@ public class DirectoryLoader extends AsyncTaskLoader<DirectoryResult> {
         try {
             client = Utils.acquireUnstableProviderOrThrow(resolver, authority);
             cursor = client.query(mUri, null, null, null, getQuerySortOrder(mSortOrder));
-            if (mSortOrder != SORT_ORDER_NONE) {
+            if (mSortOrder != SORT_ORDER_NONE && cursor != null) {
                 cursor = new SortingCursorWrapper(cursor, mSortOrder);
             }
             result.client = client;

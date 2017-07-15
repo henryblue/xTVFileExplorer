@@ -41,8 +41,7 @@ public class SortingCursorWrapper extends AbstractCursor {
 
     public SortingCursorWrapper(Cursor cursor, int sortOrder) {
         mCursor = cursor;
-
-        final int count = cursor.getCount();
+        final int count = cursor == null ? 0 : cursor.getCount();
         mPosition = new int[count];
         String[] mValueString;
         long[] mValueLong;
@@ -60,7 +59,9 @@ public class SortingCursorWrapper extends AbstractCursor {
                 throw new IllegalArgumentException();
         }
 
-        cursor.moveToPosition(-1);
+        if (cursor != null) {
+            cursor.moveToPosition(-1);
+        }
         for (int i = 0; i < count; i++) {
             cursor.moveToNext();
             mPosition[i] = i;

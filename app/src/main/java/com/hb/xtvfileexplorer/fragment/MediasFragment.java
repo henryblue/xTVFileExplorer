@@ -91,7 +91,6 @@ public class MediasFragment extends Fragment {
 			}
 		};
 		if (!mRootInfo.isManuGen) {
-			//mListView.setAdapter(mAdapter);
 			getLoaderManager().restartLoader(40, null, mCallbacks);
 		} else {
 			setEmptyState();

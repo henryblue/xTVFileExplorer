@@ -14,10 +14,9 @@ import android.util.Log;
 import android.view.View;
 
 import com.hb.xtvfileexplorer.archive.DocumentArchiveHelper;
-import com.hb.xtvfileexplorer.fragment.AppsFragment;
+import com.hb.xtvfileexplorer.fragment.DirectoryFragment;
 import com.hb.xtvfileexplorer.fragment.MediasFragment;
 import com.hb.xtvfileexplorer.fragment.RootsFragment;
-import com.hb.xtvfileexplorer.fragment.StorageFragment;
 import com.hb.xtvfileexplorer.misc.MimePredicate;
 import com.hb.xtvfileexplorer.model.DocumentInfo;
 import com.hb.xtvfileexplorer.model.DocumentStack;
@@ -144,12 +143,11 @@ public class ExplorerActivity extends BaseActivity {
                 //
             }
         }
-        if (root.isApp()) {
-            AppsFragment.show(fm, root, cwd);
-        } else if (root.isLibraryMedia()){
+
+        if (root.isLibraryMedia()){
             MediasFragment.show(fm, root, cwd);
-        } else if (RootInfo.isStorage(root)) {
-            StorageFragment.show(fm, root, cwd);
+        } else {
+            DirectoryFragment.show(fm, root, cwd);
         }
 
         final RootsFragment roots = RootsFragment.get(fm);
