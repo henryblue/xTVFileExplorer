@@ -32,6 +32,5 @@ public abstract class ItemView extends LinearLayout {
 
     public abstract void setSize(String size);
 
-    public void setBackgroundColor() {
-    }
+    public void setBackgroundColor() {}
 }
