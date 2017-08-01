@@ -99,7 +99,8 @@ public class RootsFragment extends Fragment {
                 for (int i = 0; i < groupCount; i++) {
                     mList.expandGroup(i);
                 }
-                mList.requestFocus();
+                mList.getChildAt(0).requestFocus();
+                mList.getChildAt(0).performClick();
             }
 
             @Override
