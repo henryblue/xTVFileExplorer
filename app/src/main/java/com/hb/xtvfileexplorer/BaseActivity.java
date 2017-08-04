@@ -14,6 +14,7 @@ import com.hb.xtvfileexplorer.provider.AppsProvider;
 import com.hb.xtvfileexplorer.provider.MediaProvider;
 import com.hb.xtvfileexplorer.provider.StorageProvider;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -40,6 +41,10 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
+        Collection<DirectoryResult> values = mUriCache.values();
+        for (DirectoryResult result : values) {
+            result.close();
+        }
         mUriCache = null;
         super.onDestroy();
     }

@@ -99,8 +99,17 @@ public class RootsFragment extends Fragment {
                 for (int i = 0; i < groupCount; i++) {
                     mList.expandGroup(i);
                 }
-                mList.getChildAt(0).requestFocus();
-                mList.getChildAt(0).performClick();
+
+                mList.requestFocus();
+                // make first item content show
+                final BaseActivity activity = BaseActivity.get(RootsFragment.this);
+                final Item item = (Item) mAdapter.getChild(0, 0);
+                if (item instanceof RootItem) {
+                    int index = mList.getFlatListPosition(
+                            ExpandableListView.getPackedPositionForChild(0, 0));
+                    mList.setItemChecked(index, true);
+                    activity.onRootPicked(((RootItem) item).root, true);
+                }
             }
 
             @Override

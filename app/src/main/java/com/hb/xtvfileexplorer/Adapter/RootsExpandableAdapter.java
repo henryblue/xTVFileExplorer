@@ -18,7 +18,6 @@ import java.util.Collection;
 import java.util.List;
 
 
-
 public class RootsExpandableAdapter extends BaseExpandableListAdapter {
 
     private final List<GroupInfo> mGroup = new ArrayList<>();
