@@ -3,5 +3,5 @@ A simple file manager on TV
 
 ## ScreenShot
 <p>
-<img src="screenshot.png" width="75%" />
+<img src="screenshot.png"/>
 </p>
