@@ -33,6 +33,7 @@ public class ExplorerActivity extends BaseActivity {
     private Toolbar mToolbar;
     DocumentStack mDocStack;
     private RootInfo mParentRoot;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
